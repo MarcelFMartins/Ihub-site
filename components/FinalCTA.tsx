@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { INSTA, INSTAGRAM_HANDLE, INSTAGRAM_URL, wa } from "@/lib/data";
+import { INSTAGRAM_HANDLE, INSTAGRAM_URL, wa } from "@/lib/data";
 import Magnetic from "./Magnetic";
 
 export default function FinalCTA() {
@@ -19,8 +19,6 @@ export default function FinalCTA() {
       );
       gsap.fromTo(".cta__phone", { yPercent: 60, rotate: -20 }, { yPercent: 0, rotate: -8, ease: "none", scrollTrigger: { trigger: root.current, start: "top bottom", end: "center center", scrub: true } });
       gsap.fromTo(".cta__phone--b", { yPercent: 70, rotate: 22 }, { yPercent: 5, rotate: 10, ease: "none", scrollTrigger: { trigger: root.current, start: "top bottom", end: "center center", scrub: true } });
-      const track = root.current!.querySelector(".insta__track")!;
-      gsap.to(track, { xPercent: -50, duration: 40, ease: "none", repeat: -1 });
     },
     { scope: root }
   );
@@ -52,15 +50,6 @@ export default function FinalCTA() {
         </Magnetic>
       </div>
 
-      <a className="insta" href={INSTAGRAM_URL} target="_blank" rel="noopener" aria-label="Instagram da iHub Brasil">
-        <div className="insta__track">
-          {[...INSTA, ...INSTA].map((src, i) => (
-            <div className="insta__item" key={i}>
-              <Image src={src} alt="" fill sizes="220px" />
-            </div>
-          ))}
-        </div>
-      </a>
     </section>
   );
 }

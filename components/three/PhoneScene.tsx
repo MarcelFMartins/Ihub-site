@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, Environment, Float, Lightformer, OrbitControls } from "@react-three/drei";
-import Phone from "./Phone";
+import { Suspense } from "react";
+import GlbPhone from "./GlbPhone";
 
 type Shared = {
   /** 0..1 scroll progress for the hero choreography */
@@ -53,7 +54,9 @@ function HeroRig({ progress, intro, color }: Shared) {
   return (
     <group ref={group} rotation={[0.7, Math.PI - 3, 0.5]} position={[0, -5, 0]}>
       <Float speed={1.6} rotationIntensity={0.15} floatIntensity={0.35}>
-        <Phone color={color} />
+        <Suspense fallback={null}>
+          <GlbPhone color={color} />
+        </Suspense>
       </Float>
     </group>
   );
@@ -117,7 +120,9 @@ export function OrbitPhoneCanvas({ color }: { color: React.MutableRefObject<stri
         <directionalLight position={[3, 5, 4]} intensity={1.2} />
         <Float speed={1.4} rotationIntensity={0.2} floatIntensity={0.4}>
           <group rotation={[0.1, Math.PI - 0.5, 0.05]}>
-            <Phone color={color} />
+            <Suspense fallback={null}>
+          <GlbPhone color={color} />
+        </Suspense>
           </group>
         </Float>
         <ContactShadows position={[0, -2.1, 0]} opacity={0.55} scale={8} blur={2.6} far={3} />

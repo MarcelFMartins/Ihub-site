@@ -24,8 +24,9 @@ const CARDS = [
     n: "03",
     title: "Crédito descomplicado.",
     text: "Parceria iHub + Banco do Planalto Norte: condições especiais e parcelamento facilitado para o seu novo iPhone.",
-    img: "/insta/p14.webp",
+    img: "/products/18pro-glacier.webp",
     theme: "cream",
+    chips: ["Condições especiais", "Crédito facilitado", "Banco do Planalto Norte"],
   },
   {
     n: "04",
@@ -83,7 +84,14 @@ export default function WhyStack() {
               <p>{c.text}</p>
             </div>
             <div className={`stack__img ${c.img.startsWith("/insta") ? "is-photo" : ""}`}>
-              <Image src={c.img} alt="" fill sizes="(max-width: 900px) 80vw, 40vw" />
+              <Image src={c.img} alt="" fill sizes="(max-width: 900px) 80vw, 40vw" quality={90} />
+              {"chips" in c && c.chips && (
+                <ul className="stack__chips">
+                  {c.chips.map((t) => (
+                    <li key={t}>{t}</li>
+                  ))}
+                </ul>
+              )}
             </div>
           </article>
         ))}

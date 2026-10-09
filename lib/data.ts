@@ -7,6 +7,11 @@ export const CITY = "União da Vitória · PR";
 export const MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Av.+Manoel+Ribas,+455,+Uni%C3%A3o+da+Vit%C3%B3ria+-+PR";
 
+export const MAPS_EMBED =
+  "https://www.google.com/maps?q=Av.+Manoel+Ribas,+455,+Centro,+Uni%C3%A3o+da+Vit%C3%B3ria+-+PR&z=17&output=embed";
+/** Put the storefront photo in /public/store/ and set its path here (e.g. "/store/fachada.webp"). Empty = map. */
+export const STORE_PHOTO = "";
+
 export const wa = (msg = "Olá, iHub! Vim pelo site e quero saber mais sobre os produtos.") =>
   `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 

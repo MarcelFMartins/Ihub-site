@@ -41,7 +41,7 @@ function squircle(w: number, h: number, radii: Radii, n = 3.4, seg = 22) {
   return new THREE.Shape(pts);
 }
 
-function plateGeometry(w: number, h: number, r: Radii, n?: number) {
+export function plateGeometry(w: number, h: number, r: Radii, n?: number) {
   const geo = new THREE.ShapeGeometry(squircle(w, h, r, n), 1);
   const pos = geo.attributes.position;
   const uv = new Float32Array(pos.count * 2);
@@ -92,7 +92,7 @@ function useAppleLogoTexture() {
 }
 
 /** Lock-screen wallpaper in the iHub palette, drawn on a canvas. */
-function useScreenTexture() {
+export function useScreenTexture() {
   const texture = useMemo(() => {
     const c = document.createElement("canvas");
     c.width = 720;

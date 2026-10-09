@@ -4,21 +4,19 @@ import Image from "next/image";
 import { useRef } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ADDRESS, CITY, MAPS_URL, WHATSAPP_DISPLAY, wa } from "@/lib/data";
+import { ADDRESS, CITY, MAPS_EMBED, MAPS_URL, STORE_PHOTO, WHATSAPP_DISPLAY, wa } from "@/lib/data";
 
-const COLS = [
-  ["/insta/p2.webp", "/insta/p22.webp", "/insta/p9.webp"],
-  ["/insta/p16.webp", "/insta/p6.webp", "/insta/p4.webp"],
-];
-
-/** Physical store: real photos from the iHub Instagram in counter-scrolling parallax columns. */
+/** Physical store: storefront photo (or the Google Maps embed until one is provided). */
 export default function Store() {
   const root = useRef<HTMLElement>(null);
 
   useGSAP(
     () => {
-      gsap.fromTo(".store__col--a", { yPercent: 8 }, { yPercent: -18, ease: "none", scrollTrigger: { trigger: root.current, scrub: true } });
-      gsap.fromTo(".store__col--b", { yPercent: -22 }, { yPercent: 6, ease: "none", scrollTrigger: { trigger: root.current, scrub: true } });
+      gsap.fromTo(
+        ".store__media",
+        { clipPath: "inset(12% 10% 12% 10% round 48px)", scale: 0.92 },
+        { clipPath: "inset(0% 0% 0% 0% round 32px)", scale: 1, ease: "none", scrollTrigger: { trigger: ".store__media", start: "top bottom", end: "center center", scrub: true } }
+      );
       gsap.from(".store__info > *", { y: 50, opacity: 0, stagger: 0.08, duration: 1, ease: "expo.out", scrollTrigger: { trigger: ".store__info", start: "top 75%" } });
     },
     { scope: root }
@@ -61,16 +59,22 @@ export default function Store() {
           </a>
         </div>
       </div>
-      <div className="store__gallery">
-        {COLS.map((col, ci) => (
-          <div className={`store__col store__col--${ci ? "b" : "a"}`} key={ci}>
-            {col.map((src) => (
-              <div className="store__ph" key={src}>
-                <Image src={src} alt="Loja iHub Brasil" fill sizes="(max-width: 900px) 45vw, 22vw" />
-              </div>
-            ))}
-          </div>
-        ))}
+      <div className="store__media">
+        {STORE_PHOTO ? (
+          <Image src={STORE_PHOTO} alt="Fachada da loja iHub Brasil" fill sizes="(max-width: 900px) 100vw, 50vw" quality={90} />
+        ) : (
+          <iframe
+            title="Mapa da loja iHub Brasil"
+            src={MAPS_EMBED}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
+        )}
+        <a className="store__pin" href={MAPS_URL} target="_blank" rel="noopener">
+          <strong>iHub Brasil</strong>
+          <span>{ADDRESS}</span>
+        </a>
       </div>
     </section>
   );

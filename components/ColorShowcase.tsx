@@ -73,7 +73,7 @@ export default function ColorShowcase() {
       <div className="colors__stage">
         {PRO_COLORS.map((col, i) => (
           <div className="colors__shot" key={col.id}>
-            <Image src={col.scene} alt={`iPhone 18 Pro ${col.name}`} fill sizes="(max-width: 900px) 100vw, 70vw" priority={i === 0} />
+            <Image src={col.scene} alt={`iPhone 18 Pro ${col.name}`} fill sizes="100vw" quality={90} priority={i === 0} />
           </div>
         ))}
       </div>

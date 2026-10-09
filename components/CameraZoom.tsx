@@ -38,7 +38,7 @@ export default function CameraZoom() {
         <h2 className="h-xl">Cada detalhe.</h2>
       </div>
       <div className="zoom__frame">
-        <Image src="/apple/main_camera_endframe.webp" alt="Câmera do iPhone 18 Pro em detalhe" fill sizes="100vw" />
+        <Image src="/apple/main_camera_endframe.webp" alt="Câmera do iPhone 18 Pro em detalhe" fill sizes="100vw" quality={90} />
         <div className="zoom__shade" />
       </div>
       <div className="zoom__lines">
