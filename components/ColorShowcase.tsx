@@ -73,7 +73,7 @@ export default function ColorShowcase() {
       <div className="colors__stage">
         {PRO_COLORS.map((col, i) => (
           <div className="colors__shot" key={col.id}>
-            <Image src={col.scene} alt={`iPhone 18 Pro ${col.name}`} fill sizes="100vw" quality={90} priority={i === 0} />
+            <Image src={col.img} alt={`iPhone 18 Pro ${col.name}`} fill sizes="100vw" quality={90} priority={i === 0} />
           </div>
         ))}
       </div>
@@ -89,7 +89,7 @@ export default function ColorShowcase() {
             <span key={col.id} className={i === idx ? "is-active" : ""} style={{ "--c": col.hex } as React.CSSProperties} />
           ))}
         </div>
-        <a className="btn btn--light btn--sm" href={wa(`Olá, iHub! Quero o iPhone 18 Pro na cor ${c.name}.`)} target="_blank" rel="noopener">
+        <a className="btn btn--navy btn--sm" href={wa(`Olá, iHub! Quero o iPhone 18 Pro na cor ${c.name}.`)} target="_blank" rel="noopener">
           Quero o {c.name} →
         </a>
       </div>
