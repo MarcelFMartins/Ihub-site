@@ -214,7 +214,7 @@ img { display: block; }
 
 /* ---------- lineup ---------- */
 .lineup { position: relative; background: var(--cream); color: var(--navy); overflow: hidden; }
-.lineup__track { display: flex; align-items: center; gap: 28px; padding: 120px var(--pad); width: max-content; min-height: 100vh; min-height: 100svh; height: 100svh; }
+.lineup__track { display: flex; align-items: center; gap: 28px; padding: 120px var(--pad); width: max-content; min-height: 100vh; min-height: 100svh; }
 .lineup__head { width: min(420px, 80vw); flex: none; padding-right: 40px; }
 .lineup__head .h-xl { margin-bottom: 24px; }
 .tilt { position: relative; transform-style: preserve-3d; will-change: transform; }
