@@ -14,9 +14,7 @@ export default function Marquee({ tone = "orange", reverse = false }: { tone?: "
   useGSAP(
     () => {
       const track = root.current!.querySelector(".marquee__track")!;
-      const dir = reverse ? 1 : -1;
-      const loop = gsap.to(track, { xPercent: dir * 50, duration: 28, ease: "none", repeat: -1 });
-      if (reverse) gsap.set(track, { xPercent: -50 });
+      const loop = gsap.fromTo(track, { xPercent: reverse ? -50 : 0 }, { xPercent: reverse ? 0 : -50, duration: 28, ease: "none", repeat: -1 });
       const skew = gsap.quickTo(track, "skewX", { duration: 0.4, ease: "power3" });
       ScrollTrigger.create({
         trigger: root.current,
@@ -40,8 +38,8 @@ export default function Marquee({ tone = "orange", reverse = false }: { tone?: "
         {row.concat(row).map((t, i) => (
           <span key={i} className="marquee__item">
             {t}
-            <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden>
-              <path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z" fill="currentColor" />
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden>
+              <circle cx="12" cy="12" r="12" fill="currentColor" />
             </svg>
           </span>
         ))}

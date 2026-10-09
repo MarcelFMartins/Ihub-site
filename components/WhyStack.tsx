@@ -11,7 +11,7 @@ const CARDS = [
     title: "Produtos originais Apple.",
     text: "Aparelhos lacrados e seminovos revisados, com procedência garantida e nota fiscal. Zero surpresa.",
     img: "/products/18promax-burgundy.webp",
-    theme: "navy",
+    theme: "wine",
   },
   {
     n: "02",

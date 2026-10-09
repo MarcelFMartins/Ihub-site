@@ -19,14 +19,14 @@ export default function CameraZoom() {
         { clipPath: "inset(30% 34% 30% 34% round 40px)" },
         { clipPath: "inset(0% 0% 0% 0% round 0px)", ease: "power2.inOut", duration: 1 }
       )
-        .fromTo(".zoom__frame img", { scale: 1.6 }, { scale: 1, ease: "power2.inOut", duration: 1 }, 0)
+        .fromTo(".zoom__frame img", { scale: 1.3 }, { scale: 1, ease: "power2.inOut", duration: 1 }, 0)
         .to(".zoom__intro", { opacity: 0, scale: 0.9, duration: 0.4 }, 0)
         .from(".zoom__line--1", { yPercent: 100, opacity: 0, duration: 0.4 }, 0.8)
         .to(".zoom__line--1", { yPercent: -100, opacity: 0, duration: 0.4 }, 1.5)
         .from(".zoom__line--2", { yPercent: 100, opacity: 0, duration: 0.4 }, 1.6)
         .to(".zoom__line--2", { yPercent: -100, opacity: 0, duration: 0.4 }, 2.3)
         .from(".zoom__line--3", { yPercent: 100, opacity: 0, duration: 0.4 }, 2.4)
-        .to(".zoom__frame img", { scale: 1.25, duration: 2, ease: "none" }, 1);
+        .to(".zoom__frame img", { scale: 1.12, duration: 2, ease: "none" }, 1);
     },
     { scope: root }
   );
@@ -38,7 +38,7 @@ export default function CameraZoom() {
         <h2 className="h-xl">Cada detalhe.</h2>
       </div>
       <div className="zoom__frame">
-        <Image src="/apple/main_camera_endframe.webp" alt="Câmera do iPhone 18 Pro em detalhe" fill sizes="100vw" quality={90} />
+        <Image src="/apple/main_camera_endframe.webp" alt="Câmera do iPhone 18 Pro em detalhe" fill sizes="100vw" unoptimized />
         <div className="zoom__shade" />
       </div>
       <div className="zoom__lines">

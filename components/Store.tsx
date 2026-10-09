@@ -60,20 +60,23 @@ export default function Store() {
         </div>
       </div>
       <div className="store__media">
-        {STORE_PHOTO ? (
-          <Image src={STORE_PHOTO} alt="Fachada da loja iHub Brasil" fill sizes="(max-width: 900px) 100vw, 50vw" quality={90} />
-        ) : (
+        <div className="store__panel store__panel--photo">
+          {STORE_PHOTO ? (
+            <Image src={STORE_PHOTO} alt="Fachada da loja iHub Brasil" fill sizes="(max-width: 900px) 100vw, 25vw" quality={90} />
+          ) : (
+            <div className="store__ph-empty">
+              <Image src="/logo-white.svg" alt="iHub Brasil" width={160} height={60} />
+            </div>
+          )}
+        </div>
+        <a className="store__panel store__panel--map" href={MAPS_URL} target="_blank" rel="noopener" aria-label="Abrir no Google Maps">
           <iframe
             title="Mapa da loja iHub Brasil"
             src={MAPS_EMBED}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
+            tabIndex={-1}
           />
-        )}
-        <a className="store__pin" href={MAPS_URL} target="_blank" rel="noopener">
-          <strong>iHub Brasil</strong>
-          <span>{ADDRESS}</span>
         </a>
       </div>
     </section>

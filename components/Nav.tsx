@@ -48,6 +48,9 @@ export default function Nav() {
             {label}
           </a>
         ))}
+        <a className="btn btn--orange nav__links-cta" href={wa()} target="_blank" rel="noopener">
+          Comprar agora
+        </a>
       </nav>
       <a className="btn btn--orange btn--sm nav__cta" href={wa()} target="_blank" rel="noopener">
         Comprar agora

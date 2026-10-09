@@ -28,8 +28,9 @@ export default function ColorShowcase() {
         if (next === prev) return;
         idxRef.current = next;
         setIdx(next);
-        gsap.to(shots[prev], { opacity: 0, scale: 1.08, duration: 0.9, ease: "power3.out" });
-        gsap.fromTo(shots[next], { opacity: 0, scale: 0.94, rotate: next > prev ? -3 : 3 }, { opacity: 1, scale: 1, rotate: 0, duration: 1.1, ease: "expo.out" });
+        gsap.killTweensOf([shots[prev], shots[next]]);
+        gsap.to(shots[prev], { opacity: 0, scale: 1.08, duration: 0.9, ease: "power3.out", overwrite: true });
+        gsap.fromTo(shots[next], { opacity: 0, scale: 0.94, rotate: next > prev ? -3 : 3 }, { opacity: 1, scale: 1, rotate: 0, duration: 1.1, ease: "expo.out", overwrite: true });
         gsap.to(root.current, { backgroundColor: PRO_COLORS[next].bg, duration: 1, ease: "power2.out" });
         gsap.fromTo(".colors__name .char-line", { yPercent: 100 }, { yPercent: 0, duration: 0.8, ease: "expo.out" });
       };
@@ -73,7 +74,7 @@ export default function ColorShowcase() {
       <div className="colors__stage">
         {PRO_COLORS.map((col, i) => (
           <div className="colors__shot" key={col.id}>
-            <Image src={col.img} alt={`iPhone 18 Pro ${col.name}`} fill sizes="100vw" quality={90} priority={i === 0} />
+            <Image src={col.img} alt={`iPhone 18 Pro ${col.name}`} fill sizes="100vw" unoptimized priority />
           </div>
         ))}
       </div>
