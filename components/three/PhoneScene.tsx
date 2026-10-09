@@ -46,8 +46,8 @@ function HeroRig({ progress, intro, color }: Shared) {
     const aspect = state.viewport.aspect;
     const sideX = aspect > 1 ? 1.75 : 0;
     g.position.x = THREE.MathUtils.lerp(g.position.x, sideX * (1 - e), k);
-    g.position.y = THREE.MathUtils.lerp(g.position.y, (1 - i) * -5 + (aspect > 1 ? 0 : -1.0) * (1 - e) + 0.4 * e, k);
-    const s = (aspect > 1 ? 1 : 0.8) * (1 + e * (aspect > 1 ? 0.15 : 0.3));
+    g.position.y = THREE.MathUtils.lerp(g.position.y, (1 - i) * -5 + (aspect > 1 ? 0 : -1.25) * (1 - e) + 0.4 * e, k);
+    const s = (aspect > 1 ? 1 : 0.74) * (1 + e * (aspect > 1 ? 0.15 : 0.3));
     g.scale.setScalar(THREE.MathUtils.lerp(g.scale.x, s, k));
   });
 

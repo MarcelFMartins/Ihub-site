@@ -34,7 +34,7 @@ export default function Nav() {
   const go = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
     setOpen(false);
-    lenis?.scrollTo(href, { offset: 0, duration: 1.6 });
+    lenis?.scrollTo(href === "#top" ? 0 : href, { offset: 0, duration: href === "#top" ? 2.2 : 1.6 });
   };
 
   return (
