@@ -495,3 +495,16 @@ img { display: block; }
   .hero { min-height: 560px; }
   .hero__colors { bottom: calc(18px + env(safe-area-inset-bottom)); }
 }
+
+/* the floating WhatsApp wrapper must not swallow taps meant for content underneath */
+.wa { pointer-events: none; }
+.wa__btn, .wa__bubble.is-open { pointer-events: auto; }
+@media (max-width: 900px) { .wa__bubble { display: none; } }
+
+/* colour showcase: name/dots/CTA always pinned to the bottom row, phone in the middle */
+.colors__foot { grid-row: 3; align-self: end; }
+@media (max-width: 900px) {
+  .colors__shot { left: 0; top: 27%; bottom: 25%; }
+  .colors__foot { gap: 14px 20px; }
+  .colors__name { min-width: 0; width: 100%; font-size: 30px; }
+}
