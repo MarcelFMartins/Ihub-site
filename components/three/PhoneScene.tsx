@@ -33,13 +33,13 @@ function HeroRig({ progress, intro, color }: Shared) {
     if (!g) return;
     const p = progress?.current ?? 0;
     const i = intro?.current ?? 1;
-    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+    const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
     const e = ease(THREE.MathUtils.clamp((p - 0.18) / 0.7, 0, 1));
     // intro: rise + spin in; scroll: turn from back (cameras) to front (screen)
-    const ry = Math.PI - 0.55 + (1 - i) * -2.4 + e * (Math.PI + 0.55) + mouse.current.x * 0.5;
+    const ry = Math.PI - 0.55 + (1 - i) * -2.4 + e * (3 * Math.PI + 0.55) + mouse.current.x * 0.5;
     const rx = 0.12 + (1 - i) * 0.6 - e * 0.12 + mouse.current.y * 0.25;
-    const rz = (1 - i) * 0.5 + 0.08 * (1 - e);
-    const k = 1 - Math.pow(0.0008, dt);
+    const rz = (1 - i) * 0.5 + 0.08 * (1 - e) + Math.sin(e * Math.PI) * 0.28;
+    const k = 1 - Math.pow(0.004, dt);
     g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, ry, k);
     g.rotation.x = THREE.MathUtils.lerp(g.rotation.x, rx, k);
     g.rotation.z = THREE.MathUtils.lerp(g.rotation.z, rz, k);
