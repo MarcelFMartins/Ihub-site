@@ -45,8 +45,8 @@ function HeroRig({ progress, intro, color }: Shared) {
     const aspect = state.viewport.aspect;
     const sideX = aspect > 1 ? 1.75 : 0;
     g.position.x = THREE.MathUtils.lerp(g.position.x, sideX * (1 - e), k);
-    g.position.y = THREE.MathUtils.lerp(g.position.y, (1 - i) * -5 + (aspect > 1 ? 0 : -1.45) * (1 - e), k);
-    const s = (aspect > 1 ? 1 : 0.68) * (1 + e * (aspect > 1 ? 0.35 : 0.45));
+    g.position.y = THREE.MathUtils.lerp(g.position.y, (1 - i) * -5 + (aspect > 1 ? 0 : -1.0) * (1 - e) + 0.4 * e, k);
+    const s = (aspect > 1 ? 1 : 0.8) * (1 + e * (aspect > 1 ? 0.15 : 0.3));
     g.scale.setScalar(THREE.MathUtils.lerp(g.scale.x, s, k));
   });
 
@@ -59,16 +59,15 @@ function HeroRig({ progress, intro, color }: Shared) {
   );
 }
 
-function Studio() {
+export function Studio() {
   return (
-    <Environment resolution={256} frames={1}>
-      <group rotation={[-Math.PI / 3, 0, 1]}>
-        <Lightformer form="circle" intensity={4} rotation-x={Math.PI / 2} position={[0, 5, -9]} scale={2} />
-        <Lightformer form="circle" intensity={2} rotation-y={Math.PI / 2} position={[-5, 1, -1]} scale={2} />
-        <Lightformer form="ring" color="#E8892B" intensity={8} rotation-y={Math.PI / 2} position={[-5, -1, -1]} scale={4} />
-        <Lightformer form="rect" color="#3b6bff" intensity={5} rotation-y={-Math.PI / 2} position={[10, 1, 0]} scale={[20, 2, 1]} />
-        <Lightformer form="rect" intensity={2} position={[0, 0, 8]} scale={[10, 10, 1]} />
-      </group>
+    <Environment resolution={512} frames={1}>
+      <Lightformer form="rect" intensity={3.2} position={[0, 6, 3]} rotation-x={Math.PI / 2} scale={[12, 6, 1]} />
+      <Lightformer form="rect" intensity={3} position={[-7, 0.5, 2]} rotation-y={Math.PI / 2} scale={[7, 14, 1]} />
+      <Lightformer form="rect" intensity={5} color="#ffa95c" position={[7, 0, 0]} rotation-y={-Math.PI / 2} scale={[6, 14, 1]} />
+      <Lightformer form="rect" intensity={2.5} color="#5f86ff" position={[0, -5, 3]} rotation-x={-Math.PI / 2} scale={[12, 4, 1]} />
+      <Lightformer form="circle" intensity={0.5} position={[0, 0, 9]} scale={7} />
+      <Lightformer form="rect" intensity={2} position={[0, 2, -8]} scale={[12, 7, 1]} />
     </Environment>
   );
 }
@@ -107,7 +106,7 @@ export function HeroPhoneCanvas({ active = true, ...props }: Shared & { active?:
 export function OrbitPhoneCanvas({ color }: { color: React.MutableRefObject<string> }) {
   const [ref, inView] = useInView<HTMLDivElement>();
   return (
-    <div ref={ref} style={{ position: "absolute", inset: 0, cursor: "grab" }}>
+    <div ref={ref} data-cursor="drag" style={{ position: "absolute", inset: 0, cursor: "grab" }}>
       <Canvas
         frameloop={inView ? "always" : "never"}
         dpr={[1, 2]}

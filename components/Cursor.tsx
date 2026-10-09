@@ -18,7 +18,7 @@ export default function Cursor() {
       y(e.clientY);
       const t = e.target as HTMLElement;
       el.classList.toggle("is-hover", !!t.closest("a, button"));
-      el.classList.toggle("is-drag", !!t.closest("canvas"));
+      el.classList.toggle("is-drag", !!t.closest("[data-cursor=drag]"));
     };
     window.addEventListener("pointermove", move);
     return () => window.removeEventListener("pointermove", move);
