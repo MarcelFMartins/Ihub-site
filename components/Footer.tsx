@@ -39,6 +39,7 @@ export default function Footer() {
       <div className="footer__bottom">
         <span>© {new Date().getFullYear()} iHub Brasil. Todos os direitos reservados.</span>
         <span>Revendedor independente. Apple, iPhone, iPad, MacBook e AirPods são marcas da Apple Inc.</span>
+        <span>Modelo 3D: “iPhone 18 Pro Max” por Pro Animator (Sketchfab), CC BY 4.0.</span>
       </div>
     </footer>
   );
