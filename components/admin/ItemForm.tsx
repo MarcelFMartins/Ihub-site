@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { CONDITIONS, type Condition, type Status, type StockItem } from "@/lib/data";
+import { BADGES, CONDITIONS, photosOf, type Condition, type Status, type StockItem } from "@/lib/data";
 import { photoToDataUrl, saveItem, type Private } from "@/lib/adminDb";
 
 const MODELS = [
   "iPhone 11 Pro Max", "iPhone 12 Pro Max", "iPhone 13 Pro Max", "iPhone 14 Pro Max", "iPhone 15 Pro Max", "iPhone 16 Pro Max",
   "iPhone 17", "iPhone 17 Pro", "iPhone 17 Pro Max", "iPhone 18 Pro", "iPhone 18 Pro Max",
 ];
+const MAX_PHOTOS = 6;
 const STORAGES = ["64 GB", "128 GB", "256 GB", "512 GB", "1 TB"];
 const num = (v: string) => (v.trim() === "" ? undefined : Number(v.replace(",", ".")));
 const str = (n?: number) => (n == null ? "" : String(n));
@@ -20,7 +21,10 @@ export default function ItemForm({ item, priv, onClose, onSaved }: { item?: Stoc
   const [status, setStatus] = useState<Status>(item?.status === "reservado" ? "reservado" : "disponivel");
   const [battery, setBattery] = useState(str(item?.battery));
   const [note, setNote] = useState(item?.note ?? "");
-  const [photo, setPhoto] = useState(item?.img ?? "");
+  const [photos, setPhotos] = useState<string[]>(item ? photosOf(item) : []);
+  const [description, setDescription] = useState(item?.description ?? "");
+  const [featured, setFeatured] = useState(Boolean(item?.featured));
+  const [badge, setBadge] = useState(item?.badge ?? "");
   const [imei, setImei] = useState(priv?.imei ?? "");
   const [cost, setCost] = useState(str(priv?.cost));
   const [price, setPrice] = useState(str(priv?.price));
@@ -28,24 +32,32 @@ export default function ItemForm({ item, priv, onClose, onSaved }: { item?: Stoc
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
 
-  const pick = async (f?: File) => {
-    if (!f) return;
+  const pick = async (files: FileList | null) => {
+    if (!files?.length) return;
+    setErr("");
+    const room = MAX_PHOTOS - photos.length;
+    if (room <= 0) return setErr(`Máximo de ${MAX_PHOTOS} fotos por aparelho.`);
     try {
-      setPhoto(await photoToDataUrl(f));
+      const added = await Promise.all([...files].slice(0, room).map((f) => photoToDataUrl(f)));
+      setPhotos((p) => [...p, ...added]);
+      if (files.length > room) setErr(`Só cabem ${MAX_PHOTOS} fotos; as extras foram ignoradas.`);
     } catch {
-      setErr("Não consegui ler essa foto. Tente outra.");
+      setErr("Não consegui ler alguma das fotos. Tente outra.");
     }
   };
+  const makeCover = (i: number) => setPhotos((p) => [p[i], ...p.filter((_, j) => j !== i)]);
+  const dropPhoto = (i: number) => setPhotos((p) => p.filter((_, j) => j !== i));
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!photo) return setErr("Escolha uma foto do aparelho.");
+    if (!photos.length) return setErr("Adicione pelo menos uma foto do aparelho.");
+    if (photos.join("").length > 900_000) return setErr("As fotos ficaram pesadas demais para salvar. Remova uma ou duas.");
     setBusy(true);
     setErr("");
     try {
       await saveItem(
         item?.id ?? null,
-        { model: model.trim(), storage, color: color.trim(), condition, status, img: photo, battery: condition !== "lacrado" ? num(battery) : undefined, note: note.trim() || undefined },
+        { model: model.trim(), storage, color: color.trim(), condition, status, img: photos[0], imgs: photos, description: description.trim() || undefined, featured, badge: badge.trim() || undefined, battery: condition !== "lacrado" ? num(battery) : undefined, note: note.trim() || undefined },
         { imei: imei.trim() || undefined, cost: num(cost), price: num(price), internalNote: internal.trim() || undefined }
       );
       onSaved(item ? "Alterações salvas." : "Aparelho adicionado ao estoque.");
@@ -67,19 +79,33 @@ export default function ItemForm({ item, priv, onClose, onSaved }: { item?: Stoc
         </header>
 
         <div className="adm__modalbody">
-          <div className="adm__photo">
-            <div className="adm__photobox">
-              {photo ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={photo} alt="Pré-visualização" />
-              ) : (
-                <span>Sem foto</span>
+          <div className="adm__photos">
+            <div className="adm__photogrid">
+              {photos.map((src, i) => (
+                <div className="adm__ph" key={i}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={src} alt={`Foto ${i + 1}`} />
+                  {i === 0 ? (
+                    <span className="adm__cover">Capa</span>
+                  ) : (
+                    <button type="button" className="adm__phbtn adm__phbtn--cover" onClick={() => makeCover(i)}>
+                      Tornar capa
+                    </button>
+                  )}
+                  <button type="button" className="adm__phbtn adm__phbtn--x" onClick={() => dropPhoto(i)} aria-label={`Remover foto ${i + 1}`}>
+                    ×
+                  </button>
+                </div>
+              ))}
+              {photos.length < MAX_PHOTOS && (
+                <label className="adm__phadd">
+                  <span aria-hidden>+</span>
+                  {photos.length ? "Mais fotos" : "Adicionar fotos"}
+                  <input type="file" accept="image/*" multiple hidden onChange={(e) => (pick(e.target.files), (e.target.value = ""))} />
+                </label>
               )}
             </div>
-            <label className="adm__btn adm__btn--ghost">
-              {photo ? "Trocar foto" : "Escolher foto"}
-              <input type="file" accept="image/*" hidden onChange={(e) => pick(e.target.files?.[0])} />
-            </label>
+            <p className="adm__muted">Até {MAX_PHOTOS} fotos. A primeira é a capa no site.</p>
           </div>
 
           <div className="adm__fields">
@@ -136,6 +162,30 @@ export default function ItemForm({ item, priv, onClose, onSaved }: { item?: Stoc
               <label>
                 Observação
                 <input placeholder="Ex.: marcas leves na lateral" value={note} onChange={(e) => setNote(e.target.value)} />
+              </label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Vitrine</legend>
+              <label className="adm__check">
+                <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
+                <span>
+                  <b>Destacar no catálogo</b>
+                  <small>Aparece no topo, em card grande.</small>
+                </span>
+              </label>
+              <label>
+                Selo (opcional)
+                <input list="adm-badges" placeholder="Ex.: Lançamento" value={badge} onChange={(e) => setBadge(e.target.value)} maxLength={24} />
+                <datalist id="adm-badges">
+                  {BADGES.map((b) => (
+                    <option key={b} value={b} />
+                  ))}
+                </datalist>
+              </label>
+              <label>
+                Descrição
+                <textarea rows={4} placeholder="Ex.: Lacrado, com nota fiscal e garantia Apple de 1 ano. Acompanha cabo USB-C." value={description} onChange={(e) => setDescription(e.target.value)} />
               </label>
             </fieldset>
 

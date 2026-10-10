@@ -75,6 +75,11 @@ export type Product = {
   tint: string;
 };
 
+/** Fotos do aparelho, capa primeiro. */
+export const photosOf = (s: StockItem) => (s.imgs?.length ? s.imgs : [s.img]);
+
+export const BADGES = ["Lançamento", "Novo", "Oferta", "Últimas unidades", "Mais vendido"];
+
 export const LINEUP: Product[] = [
   { name: "iPhone 18 Pro", tagline: "O Pro mais Pro de todos.", img: "/products/18pro-burgundy.webp", badge: "Lançamento", tint: "#5b1e28" },
   { name: "iPhone 18 Pro Max", tagline: "Tela maior. Bateria gigante.", img: "/products/18promax-glacier.webp", badge: "Lançamento", tint: "#8fa9c8" },
@@ -113,6 +118,14 @@ export type Condition = "lacrado" | "seminovo" | "usado";
 export type Status = "disponivel" | "reservado" | "vendido";
 
 export type StockItem = {
+  /** Todas as fotos; a primeira é a capa (igual a `img`). */
+  imgs?: string[];
+  /** Descrição exibida no modal do catálogo. */
+  description?: string;
+  /** Aparece em "Destaques" no topo do catálogo, em card grande. */
+  featured?: boolean;
+  /** Selo no card, ex.: "Lançamento", "Oferta". */
+  badge?: string;
   /** Ausente = disponível. Itens vendidos não aparecem no catálogo. */
   status?: Status;
   /** Firestore document id (only for items saved from the admin panel). */
@@ -137,8 +150,8 @@ export const CONDITIONS: { id: Condition; label: string; desc: string }[] = [
 
 /** Estoque de exemplo, usado só enquanto o Firebase não estiver configurado (veja ADMIN.md). O estoque real é cadastrado em /admin. */
 export const STOCK: StockItem[] = [
-  { model: "iPhone 18 Pro Max", storage: "256 GB", color: "Azul Glaciar", condition: "lacrado", tint: "#8fa9c8", img: "/products/18promax-glacier.webp" },
-  { model: "iPhone 18 Pro", storage: "256 GB", color: "Bordô", condition: "lacrado", tint: "#5b1e28", img: "/products/18pro-burgundy.webp" },
+  { model: "iPhone 18 Pro Max", storage: "256 GB", color: "Azul Glaciar", condition: "lacrado", tint: "#8fa9c8", featured: true, badge: "Lançamento", description: "O maior iPhone Pro, com tela de 6,9\", bateria para o dia todo e o novo sistema de câmeras. Lacrado, com nota fiscal e garantia Apple de 1 ano.", img: "/products/18promax-glacier.webp", imgs: ["/products/18promax-glacier.webp", "/products/18pro-glacier-cam.webp", "/apple/color_glacier.webp"] },
+  { model: "iPhone 18 Pro", storage: "256 GB", color: "Bordô", condition: "lacrado", tint: "#5b1e28", featured: true, badge: "Lançamento", description: "Acabamento Bordô, chip mais rápido e câmeras Pro. Lacrado, com nota fiscal e garantia Apple de 1 ano.", img: "/products/18pro-burgundy.webp", imgs: ["/products/18pro-burgundy.webp", "/products/18pro-burgundy-cam.webp", "/apple/color_burgundy.webp"] },
   { model: "iPhone 17 Pro Max", storage: "512 GB", color: "Laranja Cósmico", condition: "lacrado", tint: "#e8892b", img: "/products/17promax-orange.webp" },
   { model: "iPhone 17 Pro", storage: "256 GB", color: "Laranja Cósmico", condition: "lacrado", tint: "#e8892b", img: "/products/17pro-orange.webp" },
   { model: "iPhone 17", storage: "256 GB", color: "Sálvia", condition: "lacrado", tint: "#9fb59a", img: "/products/17-sage.webp" },

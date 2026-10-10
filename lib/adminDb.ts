@@ -5,7 +5,10 @@ import type { Condition, Status } from "./data";
 
 /** Dados internos: ficam em `stock_private`, que só os donos conseguem ler. */
 export type Private = { imei?: string; cost?: number; price?: number; soldAt?: number; soldPrice?: number; internalNote?: string };
-export type Pub = { model: string; storage: string; color: string; condition: Condition; battery?: number; note?: string; img: string; status: Status };
+export type Pub = {
+  model: string; storage: string; color: string; condition: Condition; battery?: number; note?: string; status: Status;
+  img: string; imgs: string[]; description?: string; featured: boolean; badge?: string;
+};
 
 async function fb() {
   const [fs, { firebaseApp }] = await Promise.all([import("firebase/firestore"), import("./firebase")]);
@@ -71,14 +74,14 @@ export function usePrivate() {
 }
 
 /** Reduz a foto no navegador e devolve um WebP pequeno (data URL) para salvar no documento. */
-export async function photoToDataUrl(file: File, max = 900): Promise<string> {
+export async function photoToDataUrl(file: File, max = 800): Promise<string> {
   const bmp = await createImageBitmap(file);
   const k = Math.min(1, max / Math.max(bmp.width, bmp.height));
   const c = document.createElement("canvas");
   c.width = Math.round(bmp.width * k);
   c.height = Math.round(bmp.height * k);
   c.getContext("2d")!.drawImage(bmp, 0, 0, c.width, c.height);
-  return c.toDataURL("image/webp", 0.85);
+  return c.toDataURL("image/webp", 0.8);
 }
 
 export const brl = (n?: number) => (n == null ? "—" : n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));

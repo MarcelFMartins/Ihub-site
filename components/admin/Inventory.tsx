@@ -199,7 +199,10 @@ export default function Inventory({ user, onSignOut }: { user: User; onSignOut: 
                       <Image src={i.img} alt="" fill sizes="52px" unoptimized />
                     </span>
                     <span className="inv__name">
-                      <strong>{i.model}</strong>
+                      <strong>
+                        {i.featured && <span className="inv__star" title="Destaque">★ </span>}
+                        {i.model}
+                      </strong>
                       <small>
                         {i.storage} · {i.color} · {condLabel(i.condition)}
                         {i.battery ? ` · ${i.battery}%` : ""}
@@ -248,6 +251,14 @@ export default function Inventory({ user, onSignOut }: { user: User; onSignOut: 
                   {condLabel(open.condition)}
                   {open.battery ? ` · bateria ${open.battery}%` : ""}
                 </dd>
+                {(open.featured || open.badge) && (
+                  <>
+                    <dt>Vitrine</dt>
+                    <dd>{[open.featured && "Destaque", open.badge].filter(Boolean).join(" · ")}</dd>
+                  </>
+                )}
+                <dt>Fotos</dt>
+                <dd>{open.imgs?.length ?? 1}</dd>
                 <dt>IMEI</dt>
                 <dd>{p(open).imei || "—"}</dd>
                 <dt>Custo</dt>

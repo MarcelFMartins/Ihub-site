@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import NoZoom from "@/components/NoZoom";
 
 const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -22,12 +23,15 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = { themeColor: "#0B1533" };
+export const viewport: Viewport = { themeColor: "#0B1533", width: "device-width", initialScale: 1, maximumScale: 1, userScalable: false };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className={sans.variable}>
-      <body>{children}</body>
+      <body>
+        <NoZoom />
+        {children}
+      </body>
     </html>
   );
 }
