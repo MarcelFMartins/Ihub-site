@@ -8,6 +8,7 @@ import { wa } from "@/lib/data";
 const LINKS = [
   ["iPhone 18 Pro", "#cores"],
   ["Linha iPhone", "#linha"],
+  ["Catálogo", "#catalogo"],
   ["Mac & iPad", "#ecossistema"],
   ["Por que a iHub", "#porque"],
   ["Loja", "#loja"],
