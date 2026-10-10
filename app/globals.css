@@ -177,7 +177,7 @@ img { display: block; }
 .colors__bar i { display: block; height: 100%; background: var(--grad); transform-origin: left; transform: scaleX(0); }
 
 /* ---------- camera zoom ---------- */
-.zoom { position: relative; height: 100vh; height: 100svh; background: #000; overflow: hidden; }
+.zoom { position: relative; height: 100vh; height: 100svh; background: #0a0809; overflow: hidden; }
 .zoom__intro { position: absolute; z-index: 1; top: 14vh; left: 0; right: 0; text-align: center; }
 .zoom__frame { position: absolute; inset: 0; z-index: 2; clip-path: inset(30% 34% 30% 34% round 40px); }
 .zoom__frame img { object-fit: cover; }
@@ -489,7 +489,7 @@ img { display: block; }
   .colors__shot { left: 0; top: 30%; bottom: 14%; }
 }
 
-.zoom { background: var(--navy); }
+.zoom { background: #0a0809; }
 .zoom__intro .eyebrow { color: var(--orange); }
 @media (max-width: 900px) {
   .hero { min-height: 560px; }

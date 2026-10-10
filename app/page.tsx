@@ -14,12 +14,14 @@ import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 import Cursor from "@/components/Cursor";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
+import BarColor from "@/components/BarColor";
 
 export default function Home() {
   return (
     <SmoothScroll>
       <Loader />
       <Cursor />
+      <BarColor />
       <Nav />
       <main>
         <Hero />

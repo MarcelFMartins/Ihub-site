@@ -32,7 +32,7 @@ export default function CameraZoom() {
   );
 
   return (
-    <section className="zoom" ref={root}>
+    <section className="zoom" ref={root} data-bar="#0a0809">
       <div className="zoom__intro">
         <p className="eyebrow">Sistema de câmeras Pro</p>
         <h2 className="h-xl">Cada detalhe.</h2>

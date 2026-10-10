@@ -43,7 +43,7 @@ export default function Explore360() {
   );
 
   return (
-    <section className="explore" ref={root}>
+    <section className="explore" ref={root} data-bar="#f3ebe1">
       <div className="explore__head">
         <p className="eyebrow">Experiência 360°</p>
         <h2 className="h-xl explore__title">

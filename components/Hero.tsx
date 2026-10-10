@@ -62,7 +62,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="hero" id="top" ref={root}>
+    <section className="hero" id="top" ref={root} data-bar="#f1e8dd">
       <div className="hero__glow" />
       <div className="hero__grid" />
       <div className="hero__canvas">

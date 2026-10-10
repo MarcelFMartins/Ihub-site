@@ -24,7 +24,7 @@ export default function FinalCTA() {
   );
 
   return (
-    <section className="cta" ref={root}>
+    <section className="cta" ref={root} data-bar="#0b1533">
       <div className="cta__glow" />
       <div className="cta__phone">
         <Image src="/products/18pro-burgundy.webp" alt="" fill sizes="30vw" />
