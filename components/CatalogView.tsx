@@ -16,28 +16,71 @@ const tag = (s: StockItem) => (s.status === "reservado" ? "Reservado" : s.badge 
 const keyOf = (s: StockItem) => s.id ?? `${s.model}-${s.color}-${s.condition}`;
 const isRemote = (src: string) => src.startsWith("data:");
 
+type View = "cards" | "lista";
+type Sort = "rec" | "novos" | "az" | "capacidade" | "bateria";
+type Cond = "todos" | StockItem["condition"];
+const SORTS: { id: Sort; label: string }[] = [
+  { id: "rec", label: "Recomendados" },
+  { id: "novos", label: "Mais novos" },
+  { id: "az", label: "Modelo (A–Z)" },
+  { id: "capacidade", label: "Maior capacidade" },
+  { id: "bateria", label: "Melhor bateria" },
+];
+const norm = (t: string) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const gb = (t: string) => {
+  const m = t.match(/([\d.,]+)\s*(tb|gb)/i);
+  return m ? parseFloat(m[1].replace(",", ".")) * (m[2].toLowerCase() === "tb" ? 1024 : 1) : 0;
+};
+const gen = (t: string) => Number(t.match(/\d+/)?.[0] ?? 0) * 10 + (/max/i.test(t) ? 3 : /pro/i.test(t) ? 2 : /plus/i.test(t) ? 1 : 0);
+const cmp: Record<Sort, (a: StockItem, b: StockItem) => number> = {
+  rec: () => 0,
+  novos: (a, b) => gen(b.model) - gen(a.model),
+  az: (a, b) => a.model.localeCompare(b.model, "pt-BR", { numeric: true }),
+  capacidade: (a, b) => gb(b.storage) - gb(a.storage),
+  bateria: (a, b) => (b.battery ?? 101) - (a.battery ?? 101),
+};
+
 export default function CatalogView() {
   const root = useRef<HTMLElement>(null);
-  const first = useRef(true);
   const { items, loading } = useStock();
-  const featured = items.filter((s) => s.featured);
-  const lacrados = items.filter((s) => !s.featured && s.condition === "lacrado");
-  const others = items.filter((s) => !s.featured && s.condition !== "lacrado");
-  const [filter, setFilter] = useState<"todos" | "seminovo" | "usado">("todos");
-  const list = filter === "todos" ? others : others.filter((s) => s.condition === filter);
+  const [view, setView] = useState<View>("cards");
+  const [q, setQ] = useState("");
+  const [cond, setCond] = useState<Cond>("todos");
+  const [sort, setSort] = useState<Sort>("rec");
   const [open, setOpen] = useState<StockItem | null>(null);
+
+  const active = q.trim() !== "" || cond !== "todos" || sort !== "rec";
+  const needle = norm(q.trim());
+  const visible = items
+    .filter((s) => cond === "todos" || s.condition === cond)
+    .filter((s) => !needle || norm(`${s.model} ${s.color} ${s.storage} ${label(s.condition)} ${s.badge ?? ""} ${s.description ?? ""}`).includes(needle))
+    .map((s, i) => ({ s, i }))
+    .sort((x, y) => cmp[sort](x.s, y.s) || x.i - y.i)
+    .map((x) => x.s);
+  const clear = () => (setQ(""), setCond("todos"), setSort("rec"));
+
+  const showcase = view === "cards" && !active;
+  const featured = visible.filter((s) => s.featured);
+  const lacrados = visible.filter((s) => !s.featured && s.condition === "lacrado");
+  const others = visible.filter((s) => !s.featured && s.condition !== "lacrado");
+  const counts: Record<Cond, number> = {
+    todos: items.length,
+    lacrado: items.filter((s) => s.condition === "lacrado").length,
+    seminovo: items.filter((s) => s.condition === "seminovo").length,
+    usado: items.filter((s) => s.condition === "usado").length,
+  };
 
   useGSAP(
     () => {
       if (loading) return;
       gsap.utils.toArray<HTMLElement>(".cat__reveal").forEach((el) =>
-        gsap.from(el.children, { y: 70, opacity: 0, stagger: 0.12, duration: 1, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 82%" } })
+        gsap.from(el.children, { y: 70, opacity: 0, stagger: 0.12, duration: 1, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 88%" } })
       );
       gsap.utils.toArray<HTMLElement>(".cat__float").forEach((img) =>
         gsap.fromTo(img, { y: 30, rotate: -4 }, { y: -30, rotate: 4, ease: "none", scrollTrigger: { trigger: img, start: "top bottom", end: "bottom top", scrub: true } })
       );
     },
-    { scope: root, dependencies: [loading, items.length] }
+    { scope: root, dependencies: [loading, items.length, view, showcase] }
   );
 
   useGSAP(
@@ -45,14 +88,6 @@ export default function CatalogView() {
       gsap.from(".cat__hero > *", { y: 70, opacity: 0, stagger: 0.1, duration: 1.1, ease: "expo.out", delay: 0.1 });
     },
     { scope: root }
-  );
-
-  useGSAP(
-    () => {
-      if (first.current) return void (first.current = false);
-      gsap.fromTo(".cat__row", { y: 24, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.05, duration: 0.6, ease: "expo.out", overwrite: true });
-    },
-    { scope: root, dependencies: [filter] }
   );
 
   const card = (s: StockItem, big?: boolean) => (
@@ -87,6 +122,29 @@ export default function CatalogView() {
     </Tilt>
   );
 
+  const rows = (list: StockItem[]) => (
+    <ul className="cat__list">
+      {list.map((s) => (
+        <li key={keyOf(s)}>
+          <button className="cat__row" onClick={() => setOpen(s)}>
+            <span className="cat__thumb">
+              <Image src={s.img} alt="" fill sizes="80px" unoptimized={isRemote(s.img)} />
+            </span>
+            <span className="cat__rowinfo">
+              <strong>{s.featured && <em className="cat__star">★ </em>}{s.model}</strong>
+              <small>
+                {s.storage} · {s.color}
+                {s.battery ? ` · Bateria ${s.battery}%` : ""}
+              </small>
+            </span>
+            <span className={`cat__state cat__state--${s.status === "reservado" ? "reservado" : s.condition}`}>{tag(s)}</span>
+            <span className="cat__ask">Ver →</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+
   return (
     <section className="cat" ref={root}>
       <div className="cat__hero">
@@ -100,60 +158,114 @@ export default function CatalogView() {
 
       {!loading && items.length === 0 && <p className="cat__empty">Estoque sendo atualizado. Chame a gente no WhatsApp para saber o que temos disponível.</p>}
 
-      {featured.length > 0 && (
-        <div className="cat__block">
-          <div className="cat__label cat__reveal">
-            <span>Em destaque</span>
-            <h2>Destaques</h2>
+      {items.length > 0 && (
+        <div className="cat__bar">
+          <div className="cat__search">
+            <input type="search" inputMode="search" enterKeyHint="search" placeholder="Buscar modelo, cor ou capacidade" aria-label="Buscar" value={q} onChange={(e) => setQ(e.target.value)} />
+            {q && (
+              <button onClick={() => setQ("")} aria-label="Limpar busca">
+                ×
+              </button>
+            )}
           </div>
-          <div className={`cat__grid ${featured.length === 1 ? "cat__grid--1" : "cat__grid--2"} cat__reveal`}>{featured.map((s) => card(s, true))}</div>
-        </div>
-      )}
-
-      {lacrados.length > 0 && (
-        <div className="cat__block">
-          <div className="cat__label cat__reveal">
-            <span>Novos na caixa</span>
-            <h2>Lacrados</h2>
-          </div>
-          <div className="cat__grid cat__grid--3 cat__reveal">{lacrados.map((s) => card(s))}</div>
-        </div>
-      )}
-
-      {others.length > 0 && (
-        <div className="cat__block">
-          <div className="cat__label cat__reveal">
-            <span>Revisados e com garantia</span>
-            <h2>Seminovos e usados</h2>
-          </div>
-          <div className="cat__filters" role="tablist">
-            {(["todos", "seminovo", "usado"] as const).map((id) => (
-              <button key={id} role="tab" aria-selected={filter === id} className={filter === id ? "is-active" : ""} onClick={() => setFilter(id)}>
+          <div className="cat__chips" role="tablist" aria-label="Condição">
+            {(["todos", "lacrado", "seminovo", "usado"] as const).map((id) => (
+              <button key={id} role="tab" aria-selected={cond === id} className={cond === id ? "is-active" : ""} onClick={() => setCond(id)}>
                 {id === "todos" ? "Todos" : label(id)}
+                <span>{counts[id]}</span>
               </button>
             ))}
           </div>
-          <ul className="cat__list">
-            {list.map((s) => (
-              <li key={keyOf(s)}>
-                <button className="cat__row" onClick={() => setOpen(s)}>
-                  <span className="cat__thumb">
-                    <Image src={s.img} alt="" fill sizes="80px" unoptimized={isRemote(s.img)} />
-                  </span>
-                  <span className="cat__rowinfo">
-                    <strong>{s.model}</strong>
-                    <small>
-                      {s.storage} · {s.color}
-                      {s.battery ? ` · Bateria ${s.battery}%` : ""}
-                    </small>
-                  </span>
-                  <span className={`cat__state cat__state--${s.status === "reservado" ? "reservado" : s.condition}`}>{tag(s)}</span>
-                  <span className="cat__ask">Ver →</span>
-                </button>
-              </li>
-            ))}
-          </ul>
+          <div className="cat__tools">
+            <label className="cat__sort">
+              <span>Ordenar</span>
+              <select value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
+                {SORTS.map((o) => (
+                  <option key={o.id} value={o.id}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="cat__view" role="group" aria-label="Modo de visualização">
+              <button className={view === "cards" ? "is-active" : ""} aria-pressed={view === "cards"} onClick={() => setView("cards")}>
+                <svg viewBox="0 0 20 20" aria-hidden>
+                  <rect x="2" y="2" width="7" height="7" rx="2" />
+                  <rect x="11" y="2" width="7" height="7" rx="2" />
+                  <rect x="2" y="11" width="7" height="7" rx="2" />
+                  <rect x="11" y="11" width="7" height="7" rx="2" />
+                </svg>
+                Cards
+              </button>
+              <button className={view === "lista" ? "is-active" : ""} aria-pressed={view === "lista"} onClick={() => setView("lista")}>
+                <svg viewBox="0 0 20 20" aria-hidden>
+                  <rect x="2" y="3" width="16" height="3" rx="1.5" />
+                  <rect x="2" y="8.5" width="16" height="3" rx="1.5" />
+                  <rect x="2" y="14" width="16" height="3" rx="1.5" />
+                </svg>
+                Lista
+              </button>
+            </div>
+          </div>
+          {(active || view === "lista") && (
+            <p className="cat__result" aria-live="polite">
+              {visible.length} {visible.length === 1 ? "aparelho" : "aparelhos"}
+              {active && (
+                <button onClick={clear}>Limpar filtros</button>
+              )}
+            </p>
+          )}
         </div>
+      )}
+
+      {items.length > 0 && visible.length === 0 && (
+        <div className="cat__none">
+          <p>Nenhum aparelho encontrado.</p>
+          <button className="btn btn--navy btn--sm" onClick={clear}>
+            Limpar filtros
+          </button>
+          <a className="cat__ask" href={wa("Olá, iHub! Não achei o iPhone que procuro no catálogo. Podem me ajudar?")} target="_blank" rel="noopener">
+            Pedir pelo WhatsApp →
+          </a>
+        </div>
+      )}
+
+      {visible.length > 0 && view === "lista" && <div className="cat__block cat__block--tight">{rows(visible)}</div>}
+
+      {visible.length > 0 && view === "cards" && !showcase && <div className="cat__block cat__block--tight"><div className="cat__grid cat__grid--3">{visible.map((s) => card(s))}</div></div>}
+
+      {showcase && (
+        <>
+          {featured.length > 0 && (
+            <div className="cat__block">
+              <div className="cat__label cat__reveal">
+                <span>Em destaque</span>
+                <h2>Destaques</h2>
+              </div>
+              <div className={`cat__grid ${featured.length === 1 ? "cat__grid--1" : "cat__grid--2"} cat__reveal`}>{featured.map((s) => card(s, true))}</div>
+            </div>
+          )}
+
+          {lacrados.length > 0 && (
+            <div className="cat__block">
+              <div className="cat__label cat__reveal">
+                <span>Novos na caixa</span>
+                <h2>Lacrados</h2>
+              </div>
+              <div className="cat__grid cat__grid--3 cat__reveal">{lacrados.map((s) => card(s))}</div>
+            </div>
+          )}
+
+          {others.length > 0 && (
+            <div className="cat__block">
+              <div className="cat__label cat__reveal">
+                <span>Revisados e com garantia</span>
+                <h2>Seminovos e usados</h2>
+              </div>
+              {rows(others)}
+            </div>
+          )}
+        </>
       )}
 
       {open && <ProductModal item={open} onClose={() => setOpen(null)} />}

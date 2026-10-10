@@ -985,3 +985,45 @@ input, select, textarea { font-size: 16px !important; }
 .adm__confirmicon { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: #eef0f6; color: var(--navy); font-size: 24px; font-weight: 800; }
 .adm__confirmicon.is-danger { background: #fdecea; color: #b3261e; }
 .adm__btn--solid-danger { background: #b3261e; border-color: #b3261e; }
+
+/* ---------- catálogo: busca, filtros, ordenação e modo de visualização ---------- */
+.cat__bar { display: flex; flex-direction: column; gap: 12px; margin: -40px 0 56px; }
+.cat__search { position: relative; }
+.cat__search input { width: 100%; font: inherit; font-size: 16px; padding: 15px 44px 15px 18px; border-radius: 16px; border: 1px solid rgba(11, 21, 51, 0.14); background: #fff; color: var(--navy); }
+.cat__search input:focus { outline: 2px solid var(--orange); outline-offset: 1px; border-color: transparent; }
+.cat__search button { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 50%; background: var(--cream); color: var(--navy); font-size: 20px; line-height: 1; cursor: pointer; }
+.cat__chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 calc(var(--pad) * -1); padding: 2px var(--pad); }
+.cat__chips::-webkit-scrollbar { display: none; }
+.cat__chips button { flex: none; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 600; font-size: 14px; padding: 10px 16px; border-radius: 999px; border: 1px solid rgba(11, 21, 51, 0.15); background: #fff; color: var(--navy); cursor: pointer; transition: background 0.25s, color 0.25s; white-space: nowrap; }
+.cat__chips button span { font-size: 12px; opacity: 0.55; }
+.cat__chips button.is-active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.cat__tools { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.cat__sort { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--mute-dark); }
+.cat__sort span { flex: none; }
+.cat__sort select { flex: 1; min-width: 0; max-width: 240px; font: inherit; font-size: 16px; font-weight: 600; padding: 11px 12px; border-radius: 12px; border: 1px solid rgba(11, 21, 51, 0.15); background: #fff; color: var(--navy); }
+.cat__view { flex: none; display: inline-flex; padding: 4px; border-radius: 14px; background: #fff; border: 1px solid rgba(11, 21, 51, 0.12); }
+.cat__view button { display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: 14px; font-weight: 600; padding: 9px 14px; border: 0; border-radius: 10px; background: transparent; color: var(--mute-dark); cursor: pointer; transition: background 0.25s, color 0.25s; }
+.cat__view button svg { width: 16px; height: 16px; fill: currentColor; }
+.cat__view button.is-active { background: var(--navy); color: #fff; }
+.cat__result { display: flex; align-items: center; gap: 14px; font-size: 14px; font-weight: 600; color: var(--mute-dark); }
+.cat__result button { font: inherit; font-weight: 700; color: var(--navy); background: none; border: 0; padding: 0; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.cat__none { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 40px 0 80px; color: var(--mute-dark); font-size: 18px; }
+.cat__block--tight { margin-bottom: 0; }
+.cat__star { color: var(--orange); font-style: normal; }
+@media (min-width: 900px) {
+  .cat__bar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 14px 20px; }
+  .cat__search { grid-column: 1 / -1; max-width: 520px; }
+  .cat__chips { margin: 0; padding: 2px 0; flex-wrap: wrap; }
+  .cat__tools { justify-self: end; gap: 16px; }
+  .cat__result { grid-column: 1 / -1; }
+}
+@media (max-width: 899px) { .cat__bar { margin-top: -24px; margin-bottom: 40px; } }
+@media (max-width: 560px) { .cat__view button { gap: 5px; } }
+.cat__search input::-webkit-search-cancel-button, .cat__search input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; display: none; }
+@media (max-width: 480px) {
+  .cat__tools { flex-direction: column; align-items: stretch; }
+  .cat__sort select { max-width: none; }
+  .cat__sort span { display: inline; }
+  .cat__view { display: flex; }
+  .cat__view button { flex: 1; justify-content: center; }
+}
