@@ -576,3 +576,13 @@ img { display: block; }
 }
 .nav__links a.nav__links-cta { background: var(--orange); color: var(--navy); padding: 14px 20px; font-size: 15px; border-radius: 999px; border-bottom: 0; }
 @media (max-width: 900px) { .nav__links { background: rgb(11, 21, 51); } }
+
+/* perf: keep big blurred/animated layers on their own GPU layer so scroll-driven scale/rotation doesn't re-rasterise them */
+.hero__glow, .explore__ring, .explore__ring::before { will-change: transform; }
+.hero__grid { contain: strict; }
+
+/* masked titles: room for descenders (g, p, ç) without changing line spacing */
+.split .word, .mask, .explore__title { padding-bottom: 0.22em; margin-bottom: -0.22em; }
+.explore__title { margin-bottom: calc(18px - 0.22em); }
+/* camera section: title a bit higher, still tucked behind the growing photo */
+.zoom__intro { top: 11vh; }

@@ -16,11 +16,11 @@ const GLASS = "17ProMax_glass"; // front cover glass
 const SCREEN = "Material.001"; // display panel
 
 /** iPhone 18 Pro Max model (Sketchfab, CC-BY "Pro Animator"), normalised to H tall, centred, back facing -z. */
-export default function GlbPhone({ color }: { color: React.MutableRefObject<string> }) {
+export default function GlbPhone({ color, low = false }: { color: React.MutableRefObject<string>; low?: boolean }) {
   const { scene } = useGLTF(MODEL_URL);
   const screenTex = useScreenTexture();
 
-  const { model, tinted } = useMemo(() => {
+  const { model, tinted, screen } = useMemo(() => {
     const model = scene.clone(true);
     const tinted: { mat: THREE.MeshStandardMaterial; dark: number }[] = [];
     const seen = new Map<THREE.Material, THREE.Material>();
@@ -38,12 +38,16 @@ export default function GlbPhone({ color }: { color: React.MutableRefObject<stri
       const out = mats.map((mat) => {
         if (LENSES.includes(mat.name)) {
           if (!seen.has(mat))
-            seen.set(mat, new THREE.MeshPhysicalMaterial({ color: "#06081a", metalness: 0.6, roughness: 0.04, clearcoat: 1, iridescence: 0.4, envMapIntensity: 2.5 }));
+            seen.set(mat, low
+                ? new THREE.MeshStandardMaterial({ color: "#06081a", metalness: 0.6, roughness: 0.04, envMapIntensity: 2.5 })
+                : new THREE.MeshPhysicalMaterial({ color: "#06081a", metalness: 0.6, roughness: 0.04, clearcoat: 1, iridescence: 0.4, envMapIntensity: 2.5 }));
           return seen.get(mat)!;
         }
         if (mat.name === GLASS) {
           if (!seen.has(mat))
-            seen.set(mat, new THREE.MeshPhysicalMaterial({ name: GLASS, color: "#ffffff", transparent: true, opacity: 0.08, roughness: 0, metalness: 0, clearcoat: 1, depthWrite: false }));
+            seen.set(mat, low
+                ? new THREE.MeshStandardMaterial({ name: GLASS, color: "#ffffff", transparent: true, opacity: 0.08, roughness: 0, metalness: 0, depthWrite: false })
+                : new THREE.MeshPhysicalMaterial({ name: GLASS, color: "#ffffff", transparent: true, opacity: 0.08, roughness: 0, metalness: 0, clearcoat: 1, depthWrite: false }));
           return seen.get(mat)!;
         }
         if (mat.name === SCREEN) {
@@ -101,20 +105,21 @@ export default function GlbPhone({ color }: { color: React.MutableRefObject<stri
       sm.name = "__screen";
       sm.material = (sm.material as THREE.Material).clone();
     }
-    return { model: wrap, tinted };
-  }, [scene, screenTex]);
+    return { model: wrap, tinted, screen: screen as THREE.Mesh | null };
+  }, [scene, screenTex, low]);
 
   const target = useMemo(() => new THREE.Color(), []);
   const tmp = useMemo(() => new THREE.Color(), []);
   const normal = useMemo(() => new THREE.Vector3(), []);
   const toCam = useMemo(() => new THREE.Vector3(), []);
   const wpos = useMemo(() => new THREE.Vector3(), []);
+  const quat = useMemo(() => new THREE.Quaternion(), []);
   useFrame(({ camera }, dt) => {
     // screen "wakes up" as it turns towards the viewer
-    const scr = model.getObjectByProperty("name", "__screen") as THREE.Mesh | undefined;
+    const scr = screen;
     if (scr) {
       model.getWorldPosition(wpos);
-      normal.set(0, 0, -1).applyQuaternion(model.getWorldQuaternion(new THREE.Quaternion()));
+      normal.set(0, 0, -1).applyQuaternion(model.getWorldQuaternion(quat));
       toCam.copy(camera.position).sub(wpos).normalize();
       const facing = THREE.MathUtils.smoothstep(normal.dot(toCam), 0.15, 0.75);
       const m = scr.material as THREE.MeshBasicMaterial;
