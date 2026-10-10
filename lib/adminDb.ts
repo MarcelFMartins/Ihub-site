@@ -82,3 +82,7 @@ export async function photoToDataUrl(file: File, max = 900): Promise<string> {
 }
 
 export const brl = (n?: number) => (n == null ? "—" : n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+
+/** Valor curto para os cards de resumo: R$ 950, R$ 67,5 mil, R$ 1,2 mi. */
+export const brlShort = (n: number) =>
+  "R$ " + n.toLocaleString("pt-BR", { notation: "compact", maximumFractionDigits: 1 }).replace(/\s?mil/, " mil").replace(/\s?mi$/, " mi");
