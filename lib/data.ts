@@ -111,6 +111,8 @@ export const INSTA = [
 export type Condition = "lacrado" | "seminovo" | "usado";
 
 export type StockItem = {
+  /** Firestore document id (only for items saved from the admin panel). */
+  id?: string;
   /** Cor de destaque do card (fundo suave atrás do aparelho). */
   tint?: string;
   model: string;
@@ -129,7 +131,7 @@ export const CONDITIONS: { id: Condition; label: string; desc: string }[] = [
   { id: "usado", label: "Usado", desc: "Marcas leves de uso, revisado e testado." },
 ];
 
-/** Estoque atual. Troque as fotos em /public/catalogo/ pelas fotos reais dos aparelhos. */
+/** Estoque de exemplo, usado só enquanto o Firebase não estiver configurado (veja ADMIN.md). O estoque real é cadastrado em /admin. */
 export const STOCK: StockItem[] = [
   { model: "iPhone 18 Pro Max", storage: "256 GB", color: "Azul Glaciar", condition: "lacrado", tint: "#8fa9c8", img: "/products/18promax-glacier.webp" },
   { model: "iPhone 18 Pro", storage: "256 GB", color: "Bordô", condition: "lacrado", tint: "#5b1e28", img: "/products/18pro-burgundy.webp" },

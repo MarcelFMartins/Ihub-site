@@ -221,6 +221,7 @@ img { display: block; }
 .cat__back { display: inline-flex; align-items: center; gap: 10px; align-self: flex-start; margin-bottom: 36px; padding: 11px 20px; border-radius: 999px; background: #fff; color: var(--navy); font-weight: 600; font-size: 14px; box-shadow: 0 10px 30px -18px rgba(11, 21, 51, 0.35); transition: background 0.25s, color 0.25s, gap 0.25s; }
 .cat__back:hover { background: var(--navy); color: #fff; gap: 14px; }
 .cat__hero .h-xl { margin-bottom: 20px; }
+.cat__empty { color: var(--mute-dark); font-size: 18px; max-width: 480px; }
 .cat__block { margin-bottom: 120px; }
 .cat__label { margin-bottom: 32px; }
 .cat__label span { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); margin-bottom: 10px; }
@@ -711,3 +712,28 @@ img { display: block; }
   .shop__map { height: 380px; }
   .shop__fade { background: linear-gradient(180deg, var(--navy) 0%, rgba(11, 21, 51, 0) 28%), linear-gradient(0deg, var(--navy) 0%, rgba(11, 21, 51, 0) 30%); }
 }
+
+/* ---------- admin panel ---------- */
+.adm { min-height: 100vh; background: var(--cream); color: var(--navy); padding: 32px var(--pad) 100px; display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.adm__top { width: 100%; max-width: 760px; display: flex; justify-content: space-between; align-items: center; }
+.adm__back, .adm__link { font: inherit; font-weight: 600; font-size: 14px; color: var(--navy); background: none; border: 0; cursor: pointer; padding: 0; }
+.adm__box { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 16px; background: #fff; border-radius: 28px; padding: 32px; box-shadow: 0 30px 70px -40px rgba(11, 21, 51, 0.35); }
+.adm__box--wide { max-width: 760px; }
+.adm__box h1 { font-size: 30px; letter-spacing: -0.03em; }
+.adm__box h2 { font-size: 22px; letter-spacing: -0.02em; }
+.adm__box label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; flex: 1; }
+.adm__box input, .adm__box select { font: inherit; font-size: 16px; padding: 13px 14px; border-radius: 14px; border: 1px solid rgba(11, 21, 51, 0.18); background: var(--cream); color: var(--navy); min-width: 0; }
+.adm__row { display: flex; gap: 12px; }
+.adm__muted { color: var(--mute-dark); font-size: 15px; }
+.adm__err { color: #b3261e; font-size: 14px; font-weight: 600; }
+.adm__ok { color: #2f7d5b; font-size: 14px; font-weight: 600; }
+.adm__preview { width: 140px; height: 140px; object-fit: contain; background: var(--cream); border-radius: 16px; }
+.adm__list { list-style: none; padding: 0; margin: 0; }
+.adm__list li { display: grid; grid-template-columns: 64px 1fr auto; gap: 16px; align-items: center; padding: 12px 0; border-top: 1px solid rgba(11, 21, 51, 0.1); }
+.adm__list strong { display: block; font-size: 16px; }
+.adm__list span { font-size: 13px; color: var(--mute-dark); }
+.adm__thumb { position: relative; width: 64px; height: 64px; }
+.adm__thumb img { object-fit: contain; }
+.adm__del { font: inherit; font-weight: 700; font-size: 13px; padding: 9px 16px; border-radius: 999px; border: 1px solid #b3261e; color: #b3261e; background: transparent; cursor: pointer; }
+.adm__del:hover { background: #b3261e; color: #fff; }
+@media (max-width: 560px) { .adm__row { flex-direction: column; } .adm__box { padding: 24px; } }

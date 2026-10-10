@@ -6,10 +6,12 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { CONDITIONS, STOCK } from "@/lib/data";
+import { useStock } from "@/lib/stock";
 
 /** Introdução na home que leva à página /catalogo. */
 export default function CatalogTeaser() {
   const root = useRef<HTMLElement>(null);
+  const { items } = useStock();
   const shots = [STOCK[1], STOCK[0], STOCK[2]];
 
   useGSAP(
@@ -34,7 +36,7 @@ export default function CatalogTeaser() {
         <ul className="cteaser__chips">
           {CONDITIONS.map((c) => (
             <li key={c.id}>
-              {c.label} <span>{STOCK.filter((s) => s.condition === c.id).length}</span>
+              {c.label} <span>{items.filter((s) => s.condition === c.id).length}</span>
             </li>
           ))}
         </ul>
