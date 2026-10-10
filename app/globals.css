@@ -972,3 +972,16 @@ input, select, textarea { font-size: 16px !important; }
 .adm__check small { font-weight: 500; color: var(--mute-dark); }
 .inv__star { color: var(--orange); }
 .cat__state--lacrado { background: var(--navy); }
+
+/* rodapé dos modais: 1º botão em linha inteira; o último sozinho na linha também ocupa a linha inteira */
+.adm__modal > footer.inv__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.adm__modal > footer.inv__actions .adm__btn { width: 100%; min-height: 46px; }
+.adm__modal > footer.inv__actions .adm__btn:first-child, .adm__modal > footer.inv__actions .adm__btn:last-child:nth-child(even) { grid-column: 1 / -1; }
+.adm__overlay--top { z-index: 150; }
+.adm__confirm { max-width: 400px; }
+.adm__confirmbody { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 28px 24px 8px; text-align: center; }
+.adm__confirmbody h2 { font-size: 20px; letter-spacing: -0.02em; }
+.adm__confirmbody p + p { margin-top: 6px; }
+.adm__confirmicon { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: #eef0f6; color: var(--navy); font-size: 24px; font-weight: 800; }
+.adm__confirmicon.is-danger { background: #fdecea; color: #b3261e; }
+.adm__btn--solid-danger { background: #b3261e; border-color: #b3261e; }

@@ -8,6 +8,7 @@ import { CONDITIONS, type Condition, type Status, type StockItem } from "@/lib/d
 import { brl, brlShort, removeItem, setStatus, usePrivate } from "@/lib/adminDb";
 import { useStock } from "@/lib/stock";
 import Logo from "../Logo";
+import ConfirmDialog from "./ConfirmDialog";
 import ItemForm from "./ItemForm";
 
 type Tab = "estoque" | "disponivel" | "reservado" | "vendido";
@@ -50,6 +51,7 @@ export default function Inventory({ user, onSignOut }: { user: User; onSignOut: 
   const [editing, setEditing] = useState<StockItem | "new" | null>(null);
   const [selling, setSelling] = useState<StockItem | null>(null);
   const [sellPrice, setSellPrice] = useState("");
+  const [deleting, setDeleting] = useState<StockItem | null>(null);
   const [toast, setToast] = useState("");
 
   useEffect(() => {
@@ -309,17 +311,34 @@ export default function Inventory({ user, onSignOut }: { user: User; onSignOut: 
               </button>
               <button
                 className="adm__btn adm__btn--danger"
-                onClick={() => {
-                  if (!confirm(`Excluir "${open.model} ${open.color}" definitivamente?`)) return;
-                  setOpen(null);
-                  run(() => removeItem(open.id!), "Aparelho excluído.");
-                }}
+                onClick={() => (setDeleting(open), setOpen(null))}
               >
                 Excluir
               </button>
             </footer>
           </div>
         </div>
+      )}
+
+      {deleting && (
+        <ConfirmDialog
+          title="Excluir aparelho?"
+          confirmLabel="Sim, excluir"
+          danger
+          onCancel={() => setDeleting(null)}
+          onConfirm={() => {
+            const d = deleting;
+            setDeleting(null);
+            run(() => removeItem(d.id!), "Aparelho excluído.");
+          }}
+        >
+          <p>
+            <strong>
+              {deleting.model} · {deleting.storage} · {deleting.color}
+            </strong>
+          </p>
+          <p>Ele sai do catálogo e o histórico dele (custo, preço e venda) também é apagado. Não dá para desfazer. Se foi vendido, prefira “Registrar venda”.</p>
+        </ConfirmDialog>
       )}
 
       {editing && (
