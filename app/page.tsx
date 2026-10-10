@@ -27,11 +27,11 @@ export default function Home() {
       <main>
         <Hero />
         <Marquee />
+        <CatalogTeaser />
         <ColorShowcase />
         <CameraZoom />
         <Explore360 />
         <Lineup />
-        <CatalogTeaser />
         <Ecosystem />
         <Marquee tone="navy" reverse />
         <WhyStack />
