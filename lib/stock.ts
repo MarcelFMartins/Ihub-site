@@ -5,7 +5,7 @@ import { STOCK, type StockItem } from "./data";
 import { firebaseConfigured } from "./firebase";
 
 /** Live stock from Firestore (collection "stock"); falls back to the sample list while Firebase isn't configured. */
-export function useStock() {
+export function useStock({ includeSold = false } = {}) {
   const [items, setItems] = useState<StockItem[]>(firebaseConfigured ? [] : STOCK);
   const [loading, setLoading] = useState(firebaseConfigured);
 
@@ -21,14 +21,15 @@ export function useStock() {
       off = onSnapshot(
         q,
         (snap) => {
-          setItems(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<StockItem, "id">) })));
+          const all = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<StockItem, "id">) }));
+          setItems(includeSold ? all : all.filter((i) => i.status !== "vendido"));
           setLoading(false);
         },
         () => setLoading(false)
       );
     })();
     return () => off();
-  }, []);
+  }, [includeSold]);
 
   return { items, loading };
 }

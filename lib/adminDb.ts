@@ -1,0 +1,82 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import type { Condition, Status } from "./data";
+
+/** Dados internos: ficam em `stock_private`, que só os donos conseguem ler. */
+export type Private = { imei?: string; cost?: number; price?: number; soldAt?: number; soldPrice?: number; internalNote?: string };
+export type Pub = { model: string; storage: string; color: string; condition: Condition; battery?: number; note?: string; img: string; status: Status };
+
+async function fb() {
+  const [fs, { firebaseApp }] = await Promise.all([import("firebase/firestore"), import("./firebase")]);
+  return { fs, db: fs.getFirestore(firebaseApp()) };
+}
+
+/** Escrita: valores `undefined` viram "apagar campo" ao editar e são omitidos ao criar. */
+function clean(o: object, edit: boolean, deleteField: () => unknown) {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(o)) {
+    if (v !== undefined) out[k] = v;
+    else if (edit) out[k] = deleteField();
+  }
+  return out;
+}
+
+export async function saveItem(id: string | null, pub: Pub, priv: Private) {
+  const { fs, db } = await fb();
+  const ref = id ? fs.doc(db, "stock", id) : fs.doc(fs.collection(db, "stock"));
+  const edit = Boolean(id);
+  const batch = fs.writeBatch(db);
+  batch.set(ref, { ...clean(pub, edit, fs.deleteField), ...(edit ? {} : { createdAt: fs.serverTimestamp() }) }, { merge: true });
+  batch.set(fs.doc(db, "stock_private", ref.id), clean(priv, edit, fs.deleteField), { merge: true });
+  await batch.commit();
+}
+
+export async function setStatus(id: string, status: Status, soldPrice?: number) {
+  const { fs, db } = await fb();
+  const batch = fs.writeBatch(db);
+  batch.update(fs.doc(db, "stock", id), { status });
+  batch.set(
+    fs.doc(db, "stock_private", id),
+    status === "vendido" ? { soldAt: Date.now(), soldPrice: soldPrice ?? null } : { soldAt: fs.deleteField(), soldPrice: fs.deleteField() },
+    { merge: true }
+  );
+  await batch.commit();
+}
+
+export async function removeItem(id: string) {
+  const { fs, db } = await fb();
+  const batch = fs.writeBatch(db);
+  batch.delete(fs.doc(db, "stock", id));
+  batch.delete(fs.doc(db, "stock_private", id));
+  await batch.commit();
+}
+
+export function usePrivate() {
+  const [map, setMap] = useState<Record<string, Private>>({});
+  useEffect(() => {
+    let off = () => {};
+    fb().then(({ fs, db }) => {
+      off = fs.onSnapshot(fs.collection(db, "stock_private"), (snap) => {
+        const m: Record<string, Private> = {};
+        snap.forEach((d) => (m[d.id] = d.data() as Private));
+        setMap(m);
+      });
+    });
+    return () => off();
+  }, []);
+  return map;
+}
+
+/** Reduz a foto no navegador e devolve um WebP pequeno (data URL) para salvar no documento. */
+export async function photoToDataUrl(file: File, max = 900): Promise<string> {
+  const bmp = await createImageBitmap(file);
+  const k = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas");
+  c.width = Math.round(bmp.width * k);
+  c.height = Math.round(bmp.height * k);
+  c.getContext("2d")!.drawImage(bmp, 0, 0, c.width, c.height);
+  return c.toDataURL("image/webp", 0.85);
+}
+
+export const brl = (n?: number) => (n == null ? "—" : n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));

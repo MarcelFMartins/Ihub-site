@@ -53,7 +53,7 @@ export default function CatalogView() {
 
   const Card = ({ s, big }: { s: StockItem; big?: boolean }) => (
     <Tilt className={`cat__card ${big ? "cat__card--big" : ""}`} max={5} style={{ "--tint": s.tint } as React.CSSProperties}>
-      <span className="cat__tag">Lacrado</span>
+      <span className={`cat__tag ${s.status === "reservado" ? "cat__tag--res" : ""}`}>{s.status === "reservado" ? "Reservado" : "Lacrado"}</span>
       <div className="cat__imgwrap">
         <div className="cat__float">
           <Image src={s.img} alt={`${s.model} ${s.color}`} fill sizes={big ? "(max-width: 800px) 90vw, 560px" : "(max-width: 800px) 90vw, 360px"} priority={big} />
@@ -142,7 +142,7 @@ export default function CatalogView() {
                   {s.battery ? ` · Bateria ${s.battery}%` : ""}
                 </p>
               </div>
-              <span className={`cat__state cat__state--${s.condition}`}>{label(s.condition)}</span>
+              <span className={`cat__state cat__state--${s.status === "reservado" ? "reservado" : s.condition}`}>{s.status === "reservado" ? "Reservado" : label(s.condition)}</span>
               <a className="cat__ask" href={ask(s)} target="_blank" rel="noopener">
                 Consultar →
               </a>

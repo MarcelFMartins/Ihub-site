@@ -1,6 +1,12 @@
 # Painel dos donos (`/admin`)
 
-Os donos entram em `seusite.com/admin` com e-mail e senha, adicionam celulares (com foto) e retiram os vendidos. O catálogo do site atualiza na hora.
+Os donos entram em `seusite.com/admin` com e-mail e senha e controlam o estoque:
+- **Cadastro** de cada aparelho (foto, modelo, capacidade, cor, condição, bateria, observação) e **controle interno** (IMEI, custo, preço de venda, anotação) que nunca aparece no site.
+- **Situação**: Disponível, Reservado ou Vendido. Vendidos saem do catálogo e ficam no histórico (com valor e data da venda).
+- **Painel** com disponíveis, reservados, vendidos e lucro do mês, e valor em estoque. Busca por modelo, cor ou IMEI.
+- Recuperação de senha por e-mail ("Esqueci minha senha").
+
+O catálogo do site atualiza na hora.
 
 Os dados ficam no **Firebase** (plano gratuito basta). Configuração única, feita por quem cuida do site:
 

@@ -110,7 +110,11 @@ export const INSTA = [
 
 export type Condition = "lacrado" | "seminovo" | "usado";
 
+export type Status = "disponivel" | "reservado" | "vendido";
+
 export type StockItem = {
+  /** Ausente = disponível. Itens vendidos não aparecem no catálogo. */
+  status?: Status;
   /** Firestore document id (only for items saved from the admin panel). */
   id?: string;
   /** Cor de destaque do card (fundo suave atrás do aparelho). */
