@@ -22,7 +22,7 @@ const STATUS_LABEL: Record<Status, string> = { disponivel: "Disponível", reserv
 
 export default function Inventory({ user, onSignOut }: { user: User; onSignOut: () => void }) {
   const { items, loading } = useStock({ includeSold: true });
-  const priv = usePrivate();
+  const { map: priv, denied } = usePrivate();
   const [tab, setTab] = useState<Tab>("estoque");
   const [cond, setCond] = useState<"" | Condition>("");
   const [q, setQ] = useState("");
@@ -95,6 +95,12 @@ export default function Inventory({ user, onSignOut }: { user: User; onSignOut: 
           <button onClick={onSignOut}>Sair</button>
         </div>
       </header>
+
+      {denied && (
+        <div className="adm__alert" role="alert">
+          <strong>Sem permissão no Firebase.</strong> O e-mail <b>{user.email}</b> não está liberado nas regras do Firestore (coleções <code>stock</code> e <code>stock_private</code>). Abra Firestore → Regras, cole o conteúdo de <code>firestore.rules</code> com este e-mail na lista e clique em Publicar.
+        </div>
+      )}
 
       <section className="adm__stats">
         <div>

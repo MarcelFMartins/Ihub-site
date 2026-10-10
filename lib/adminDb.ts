@@ -54,6 +54,7 @@ export async function removeItem(id: string) {
 
 export function usePrivate() {
   const [map, setMap] = useState<Record<string, Private>>({});
+  const [denied, setDenied] = useState(false);
   useEffect(() => {
     let off = () => {};
     fb().then(({ fs, db }) => {
@@ -61,11 +62,12 @@ export function usePrivate() {
         const m: Record<string, Private> = {};
         snap.forEach((d) => (m[d.id] = d.data() as Private));
         setMap(m);
-      });
+        setDenied(false);
+      }, (e) => setDenied(((e as { code?: string }).code ?? "").includes("permission")));
     });
     return () => off();
   }, []);
-  return map;
+  return { map, denied };
 }
 
 /** Reduz a foto no navegador e devolve um WebP pequeno (data URL) para salvar no documento. */

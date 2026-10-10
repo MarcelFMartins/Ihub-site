@@ -51,7 +51,7 @@ export default function ItemForm({ item, priv, onClose, onSaved }: { item?: Stoc
       onSaved(item ? "Alterações salvas." : "Aparelho adicionado ao estoque.");
     } catch (e) {
       const denied = ((e as { code?: string })?.code ?? "").includes("permission");
-      setErr(denied ? "Sem permissão. Este e-mail não está autorizado nas regras do Firebase." : "Não foi possível salvar. Tente novamente.");
+      setErr(denied ? "Sem permissão. Publique as regras de firestore.rules no Firebase com o e-mail dos donos (coleções stock e stock_private)." : "Não foi possível salvar. Tente novamente.");
       setBusy(false);
     }
   };

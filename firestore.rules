@@ -4,7 +4,7 @@ service cloud.firestore {
     // TROQUE os e-mails de exemplo pelos e-mails dos donos.
     function isOwner() {
       return request.auth != null
-        && request.auth.token.email in ["dono1@exemplo.com", "dono2@exemplo.com"];
+        && request.auth.token.email.lower() in ["dono1@exemplo.com", "dono2@exemplo.com"] /* e-mails em minúsculas */;
     }
 
     // Dados públicos do catálogo.
