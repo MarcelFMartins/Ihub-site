@@ -5,31 +5,40 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { CONDITIONS, STOCK, wa, type StockItem } from "@/lib/data";
+import { CONDITIONS, wa, type StockItem } from "@/lib/data";
+import { useStock } from "@/lib/stock";
 import Tilt from "./Tilt";
 
-const lacrados = STOCK.filter((s) => s.condition === "lacrado");
-const line18 = lacrados.filter((s) => s.model.includes("18"));
-const line17 = lacrados.filter((s) => s.model.includes("17"));
-const others = STOCK.filter((s) => s.condition !== "lacrado");
 const label = (c: StockItem["condition"]) => CONDITIONS.find((x) => x.id === c)!.label;
 const ask = (s: StockItem) => wa(`Olá, iHub! Tenho interesse no ${s.model} ${s.storage} ${s.color} (${label(s.condition)}). Ainda está disponível?`);
 
 export default function CatalogView() {
   const root = useRef<HTMLElement>(null);
   const first = useRef(true);
-  const [filter, setFilter] = useState<"todos" | "seminovo" | "usado">("todos");
+  const { items, loading } = useStock();
+  const lacrados = items.filter((s) => s.condition === "lacrado");
+  const line18 = lacrados.filter((s) => s.model.includes("18"));
+  const line17 = lacrados.filter((s) => s.model.includes("17") && !s.model.includes("18"));
+  const others = items.filter((s) => !line18.includes(s) && !line17.includes(s));
+  const [filter, setFilter] = useState<"todos" | StockItem["condition"]>("todos");
   const list = filter === "todos" ? others : others.filter((s) => s.condition === filter);
 
   useGSAP(
     () => {
-      gsap.from(".cat__hero > *", { y: 70, opacity: 0, stagger: 0.1, duration: 1.1, ease: "expo.out", delay: 0.1 });
+      if (loading) return;
       gsap.utils.toArray<HTMLElement>(".cat__reveal").forEach((el) =>
         gsap.from(el.children, { y: 70, opacity: 0, stagger: 0.12, duration: 1, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 82%" } })
       );
       gsap.utils.toArray<HTMLElement>(".cat__float").forEach((img) =>
         gsap.fromTo(img, { y: 30, rotate: -4 }, { y: -30, rotate: 4, ease: "none", scrollTrigger: { trigger: img, start: "top bottom", end: "bottom top", scrub: true } })
       );
+    },
+    { scope: root, dependencies: [loading, items.length] }
+  );
+
+  useGSAP(
+    () => {
+      gsap.from(".cat__hero > *", { y: 70, opacity: 0, stagger: 0.1, duration: 1.1, ease: "expo.out", delay: 0.1 });
     },
     { scope: root }
   );
@@ -75,6 +84,9 @@ export default function CatalogView() {
         <p className="muted-dark">Lacrados, seminovos e usados revisados. Chame no WhatsApp para reservar.</p>
       </div>
 
+      {!loading && items.length === 0 && <p className="cat__empty">Estoque sendo atualizado. Chame a gente no WhatsApp para saber o que temos disponível.</p>}
+
+      {line18.length > 0 && (
       <div className="cat__block">
         <div className="cat__label cat__reveal">
           <span>Lançamento</span>
@@ -82,11 +94,14 @@ export default function CatalogView() {
         </div>
         <div className="cat__grid cat__grid--2 cat__reveal">
           {line18.map((s) => (
-            <Card s={s} big key={s.model} />
+            <Card s={s} big key={s.id ?? s.model} />
           ))}
         </div>
       </div>
 
+      )}
+
+      {line17.length > 0 && (
       <div className="cat__block">
         <div className="cat__label cat__reveal">
           <span>Lacrados</span>
@@ -94,18 +109,21 @@ export default function CatalogView() {
         </div>
         <div className="cat__grid cat__grid--3 cat__reveal">
           {line17.map((s) => (
-            <Card s={s} key={s.model} />
+            <Card s={s} key={s.id ?? s.model} />
           ))}
         </div>
       </div>
 
+      )}
+
+      {others.length > 0 && (
       <div className="cat__block">
         <div className="cat__label cat__reveal">
-          <span>Revisados e com garantia</span>
+          <span>Mais opções</span>
           <h2>Seminovos e usados</h2>
         </div>
         <div className="cat__filters" role="tablist">
-          {(["todos", "seminovo", "usado"] as const).map((id) => (
+          {(["todos", "lacrado", "seminovo", "usado"] as const).map((id) => (
             <button key={id} role="tab" aria-selected={filter === id} className={filter === id ? "is-active" : ""} onClick={() => setFilter(id)}>
               {id === "todos" ? "Todos" : label(id)}
             </button>
@@ -113,7 +131,7 @@ export default function CatalogView() {
         </div>
         <ul className="cat__list">
           {list.map((s) => (
-            <li className="cat__row" key={`${s.model}-${s.condition}`}>
+            <li className="cat__row" key={s.id ?? `${s.model}-${s.condition}`}>
               <div className="cat__thumb">
                 <Image src={s.img} alt="" fill sizes="80px" />
               </div>
@@ -132,6 +150,7 @@ export default function CatalogView() {
           ))}
         </ul>
       </div>
+      )}
     </section>
   );
 }
