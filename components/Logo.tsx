@@ -29,7 +29,7 @@ export default function Logo({ className, ink = "currentColor", sub = true, badg
       <circle cx="22" cy="24" r="10" fill={ink} />
       {/* connector crossbar */}
       <path d="M56 74 H86" stroke={ink} strokeWidth={9} strokeLinecap="round" />
-      <circle cx="92" cy="74" r="7" stroke={ink} strokeWidth={5} />
+      <circle cx="92" cy="74" r="7.5" fill={ink} />
       {/* gold ring */}
       <path d="M182 64 A44 44 0 1 1 214 134" stroke="#E0A04A" strokeWidth={3.2} strokeLinecap="round" />
       {badge && (
