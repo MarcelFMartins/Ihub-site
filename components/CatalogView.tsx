@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -66,6 +67,9 @@ export default function CatalogView() {
   return (
     <section className="cat" ref={root}>
       <div className="cat__hero">
+        <Link className="cat__back" href="/">
+          <span aria-hidden>←</span> Voltar ao início
+        </Link>
         <p className="eyebrow eyebrow--dark">Catálogo</p>
         <h1 className="h-xl">Em estoque.</h1>
         <p className="muted-dark">Lacrados, seminovos e usados revisados. Chame no WhatsApp para reservar.</p>
