@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { PRO_COLORS, wa } from "@/lib/data";
+import { DEFAULT_COLOR, PRO_COLORS, wa } from "@/lib/data";
 import SplitText from "./SplitText";
 
 const HeroPhoneCanvas = dynamic(() => import("./three/PhoneScene").then((m) => m.HeroPhoneCanvas), { ssr: false });
@@ -13,8 +13,8 @@ export default function Hero() {
   const root = useRef<HTMLElement>(null);
   const progress = useRef(0);
   const intro = useRef(0);
-  const color = useRef(PRO_COLORS[0].hex);
-  const [active, setActive] = useState(0);
+  const color = useRef(PRO_COLORS[DEFAULT_COLOR].hex);
+  const [active, setActive] = useState(DEFAULT_COLOR);
   const [running, setRunning] = useState(true);
   const stopTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 

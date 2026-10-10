@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { PRO_COLORS, wa } from "@/lib/data";
+import { DEFAULT_COLOR, PRO_COLORS, wa } from "@/lib/data";
 
 const OrbitPhoneCanvas = dynamic(() => import("./three/PhoneScene").then((m) => m.OrbitPhoneCanvas), { ssr: false });
 
@@ -17,8 +17,8 @@ const SPECS = [
 
 export default function Explore360() {
   const root = useRef<HTMLElement>(null);
-  const color = useRef(PRO_COLORS[0].hex);
-  const [active, setActive] = useState(0);
+  const color = useRef(PRO_COLORS[DEFAULT_COLOR].hex);
+  const [active, setActive] = useState(DEFAULT_COLOR);
   const [touched, setTouched] = useState(false);
 
   useGSAP(

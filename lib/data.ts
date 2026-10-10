@@ -64,6 +64,9 @@ export const PRO_COLORS: PhoneColor[] = [
   },
 ];
 
+/** Finish the 3D phones start in (Bordô). */
+export const DEFAULT_COLOR = PRO_COLORS.findIndex((c) => c.id === "burgundy");
+
 export type Product = {
   name: string;
   tagline: string;
