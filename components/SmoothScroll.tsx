@@ -6,6 +6,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
+// mobile address bar showing/hiding resizes the viewport; recalculating every pin on that causes jumps
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 const LenisContext = createContext<Lenis | null>(null);
 export const useLenis = () => useContext(LenisContext);

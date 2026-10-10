@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { PRO_COLORS, wa } from "@/lib/data";
+import { DEFAULT_COLOR, PRO_COLORS, wa } from "@/lib/data";
 import SplitText from "./SplitText";
 
 const HeroPhoneCanvas = dynamic(() => import("./three/PhoneScene").then((m) => m.HeroPhoneCanvas), { ssr: false });
@@ -13,9 +13,10 @@ export default function Hero() {
   const root = useRef<HTMLElement>(null);
   const progress = useRef(0);
   const intro = useRef(0);
-  const color = useRef(PRO_COLORS[0].hex);
-  const [active, setActive] = useState(0);
+  const color = useRef(PRO_COLORS[DEFAULT_COLOR].hex);
+  const [active, setActive] = useState(DEFAULT_COLOR);
   const [running, setRunning] = useState(true);
+  const stopTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useGSAP(
     () => {
@@ -42,16 +43,23 @@ export default function Hero() {
             pin: true,
             scrub: 1,
             onUpdate: (s) => (progress.current = s.progress),
-            onLeave: () => setRunning(false),
-            onEnterBack: () => setRunning(true),
+            // keep rendering for a moment after leaving so the phone settles instead of freezing mid-turn
+            onToggle: (self) => {
+              clearTimeout(stopTimer.current);
+              if (self.isActive) setRunning(true);
+              else stopTimer.current = setTimeout(() => setRunning(false), 2500);
+            },
           },
         })
-        .to(".hero__copy", { y: -140, opacity: 0, ease: "none", duration: 0.22 }, 0)
-        .to(".hero__colors, .hero__hint", { y: 30, opacity: 0, ease: "none", duration: 0.18 }, 0)
+        .fromTo(".hero__copy", { y: 0, opacity: 1 }, { y: -140, opacity: 0, ease: "none", duration: 0.22, immediateRender: false }, 0)
+        .fromTo(".hero__colors, .hero__hint", { y: 0, opacity: 1 }, { y: 30, opacity: 0, ease: "none", duration: 0.18, immediateRender: false }, 0)
         .to(".hero__glow", { scale: 1.8, ease: "none", duration: 1 }, 0)
         .fromTo(".hero__reveal", { opacity: 0, y: 80 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.3 }, 0.6);
 
-      return () => window.removeEventListener("ihub:loaded", play);
+      return () => {
+        window.removeEventListener("ihub:loaded", play);
+        clearTimeout(stopTimer.current);
+      };
     },
     { scope: root }
   );
@@ -70,7 +78,7 @@ export default function Hero() {
       </div>
 
       <div className="hero__copy">
-        <p className="eyebrow eyebrow--live" data-fade>
+        <p className="eyebrow" data-fade>
           Lançamento · Pronta entrega
         </p>
         <h1 className="hero__title">
