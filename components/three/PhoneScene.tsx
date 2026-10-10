@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Environment, Float, Lightformer, OrbitControls, PerformanceMonitor } from "@react-three/drei";
+import { ContactShadows, Environment, Float, Lightformer, OrbitControls } from "@react-three/drei";
 import { Suspense } from "react";
 import { isLowEnd } from "@/lib/perf";
 import { markModelReady } from "@/lib/preload";
@@ -104,11 +104,14 @@ export function Studio({ low = false }: { low?: boolean }) {
 /** Picks render settings once per device, and lowers pixel ratio if the frame rate drops. */
 function useQuality() {
   const [low] = useState(isLowEnd);
-  // full sharpness on capable devices; step down only if the frame rate actually drops
-  const [dpr, setDpr] = useState(() => (low ? 1 : Math.min(typeof window === "undefined" ? 1 : window.devicePixelRatio, 2)));
-  const monitor = <PerformanceMonitor onDecline={() => setDpr((d) => Math.max(1, d - 0.5))} flipflops={3} onFallback={() => setDpr(1)} />;
-  const gl = { antialias: !low, alpha: true, powerPreference: "high-performance" as const, toneMapping: THREE.ACESFilmicToneMapping };
-  return { low, dpr, gl, monitor };
+  // Fixed pixel ratio: phones keep a sharp image (never below 1.5 on retina screens), and we avoid
+  // resizing the canvas mid-scroll, which itself causes hitches. Weak GPUs get lighter shading instead.
+  const [dpr] = useState(() => {
+    const native = typeof window === "undefined" ? 1 : window.devicePixelRatio;
+    return Math.min(native, low ? 1.5 : 2);
+  });
+  const gl = { antialias: true, alpha: true, powerPreference: "high-performance" as const, toneMapping: THREE.ACESFilmicToneMapping };
+  return { low, dpr, gl };
 }
 
 function useInView<T extends HTMLElement>() {
@@ -133,7 +136,6 @@ export function HeroPhoneCanvas({ active = true, ...props }: Shared & { active?:
         camera={{ position: [0, 0, 9], fov: 30 }}
         gl={q.gl}
       >
-        {q.monitor}
         <ambientLight intensity={0.3} />
         <directionalLight position={[3, 5, 4]} intensity={1.4} />
         <spotLight position={[-6, 2, 3]} intensity={12} color="#E8892B" angle={0.5} penumbra={1} />
@@ -155,7 +157,6 @@ export function OrbitPhoneCanvas({ color }: { color: React.MutableRefObject<stri
         camera={{ position: [0, 0.4, 8.5], fov: 32 }}
         gl={q.gl}
       >
-        {q.monitor}
         <ambientLight intensity={0.35} />
         <directionalLight position={[3, 5, 4]} intensity={1.2} />
         <Suspense fallback={null}>

@@ -586,3 +586,67 @@ img { display: block; }
 .explore__title { margin-bottom: calc(18px - 0.22em); }
 /* camera section: title a bit higher, still tucked behind the growing photo */
 .zoom__intro { top: 11vh; }
+
+/* perf: the glow is already a soft radial gradient; an extra 30px blur on a 70vmax layer costs a lot of GPU memory on phones */
+.hero__glow { filter: none; }
+/* perf on touch devices: backdrop blur over a live WebGL canvas forces a full recomposite every frame */
+@media (pointer: coarse) {
+  .nav, .nav.is-scrolled, .btn--ghost, .hero__colors, .stack__chips li, .nav__links { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .nav, .nav.is-scrolled { background: rgba(11, 21, 51, 0.96); }
+  .hero__colors { background: rgba(255, 255, 255, 0.92); }
+}
+
+/* ---------- store (shop): one navy card, statement + contacts, map bleeding to the edge ---------- */
+.shop { background: var(--cream); padding: clamp(80px, 10vw, 140px) var(--pad); }
+.shop__card {
+  position: relative; display: grid; grid-template-columns: 1fr 1fr; min-height: min(86vh, 760px); border-radius: 40px; overflow: hidden; color: #fff;
+  background: radial-gradient(80% 70% at 0% 100%, rgba(232, 137, 43, 0.22), transparent 60%), radial-gradient(60% 60% at 30% 0%, #1d3270 0%, var(--navy) 70%);
+  box-shadow: 0 50px 100px -50px rgba(11, 21, 51, 0.55);
+}
+.shop__info { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; padding: clamp(36px, 5vw, 80px); }
+.shop__title { font-size: clamp(34px, 3.7vw, 66px); text-wrap: balance; font-weight: 800; letter-spacing: -0.05em; line-height: 0.98; margin-bottom: 22px; }
+.shop__lead { font-size: 16.5px; line-height: 1.6; color: var(--mute); max-width: 440px; margin-bottom: 34px; }
+.shop__rows { list-style: none; display: grid; gap: 10px; margin-bottom: 34px; max-width: 460px; }
+.shop__rows a { display: flex; align-items: center; gap: 16px; padding: 14px 18px 14px 14px; border-radius: 20px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.07); transition: background 0.4s, border-color 0.4s, transform 0.5s var(--ease); }
+.shop__rows a:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(245, 238, 230, 0.45); transform: translateX(6px); }
+.shop__rows i { flex: none; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: var(--cream); color: var(--navy); }
+.shop__rows span { display: grid; font-size: 16px; font-weight: 700; line-height: 1.35; }
+.shop__rows small { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 2px; }
+.shop__rows em { font-style: normal; font-weight: 700; color: var(--mute); font-size: 14px; }
+.shop__ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+.shop__map { position: relative; display: block; overflow: hidden; background: var(--navy-2); }
+.shop__map img { object-fit: cover; }
+.shop__map iframe { position: absolute; left: 0; top: -240px; width: 100%; height: calc(100% + 480px); border: 0; pointer-events: none; filter: grayscale(0.85) contrast(1.05) brightness(0.92); }
+.shop__fade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, var(--navy) 0%, rgba(11, 21, 51, 0.35) 22%, rgba(11, 21, 51, 0) 45%), linear-gradient(0deg, rgba(11, 21, 51, 0.35), transparent 30%); }
+.shop__pin { position: absolute; left: 50%; top: 50%; translate: -27px calc(-50% - 20px); z-index: 2; display: flex; align-items: center; gap: 12px; padding: 10px 18px 10px 10px; border-radius: 999px; background: var(--navy); color: #fff; box-shadow: 0 20px 40px -12px rgba(11, 21, 51, 0.6); white-space: nowrap; }
+.shop__pin b { position: relative; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--cream); color: var(--navy); }
+.shop__pin b::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--cream); animation: waRipple 2.4s cubic-bezier(0.2, 0.6, 0.3, 1) infinite; }
+.shop__pin > span { display: grid; font-size: 12px; font-weight: 700; color: var(--mute); line-height: 1.3; }
+.shop__pin strong { font-size: 15px; color: #fff; }
+@media (max-width: 900px) {
+  .shop { padding: 64px 14px; }
+  .shop__card { grid-template-columns: 1fr; border-radius: 30px; min-height: 0; }
+  .shop__info { padding: 34px 24px 28px; }
+  .shop__map { height: 360px; }
+  .shop__fade { background: linear-gradient(180deg, var(--navy) 0%, rgba(11, 21, 51, 0) 30%); }
+}
+
+/* shop: cream accents instead of orange so the card reads as one calm block */
+.shop .eyebrow { color: rgba(245, 238, 230, 0.6); }
+.shop__rows small { color: rgba(245, 238, 230, 0.5); }
+.shop .grad, .shop .grad .char { background: none; -webkit-text-fill-color: #d8c3a5; color: #d8c3a5; }
+.shop .btn--orange { background: var(--cream); color: var(--navy); box-shadow: 0 18px 40px -18px rgba(245, 238, 230, 0.35); }
+.shop .btn--orange:hover { background: #fff; }
+.shop__card { background: radial-gradient(80% 70% at 0% 100%, rgba(245, 238, 230, 0.07), transparent 60%), radial-gradient(60% 60% at 30% 0%, #1d3270 0%, var(--navy) 70%); }
+
+/* shop as a full-bleed section flowing straight into the final CTA (same navy, no card edges) */
+.shop { padding: 0; background: var(--navy); }
+.shop__card { border-radius: 0; box-shadow: none; min-height: min(92vh, 820px); background: radial-gradient(70% 60% at 0% 0%, #1d3270 0%, transparent 70%), var(--navy); clip-path: none !important; scale: none; }
+.shop__info { padding: clamp(80px, 9vw, 140px) clamp(32px, 4vw, 72px) clamp(80px, 9vw, 140px) var(--pad); }
+.shop__fade { background: linear-gradient(90deg, var(--navy) 0%, rgba(11, 21, 51, 0.35) 22%, rgba(11, 21, 51, 0) 45%), linear-gradient(0deg, var(--navy) 0%, rgba(11, 21, 51, 0) 28%), linear-gradient(180deg, var(--navy) 0%, rgba(11, 21, 51, 0) 18%); }
+@media (max-width: 900px) {
+  .shop { padding: 0; }
+  .shop__info { padding: 72px 20px 32px; }
+  .shop__map { height: 380px; }
+  .shop__fade { background: linear-gradient(180deg, var(--navy) 0%, rgba(11, 21, 51, 0) 28%), linear-gradient(0deg, var(--navy) 0%, rgba(11, 21, 51, 0) 30%); }
+}
