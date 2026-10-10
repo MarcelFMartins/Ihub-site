@@ -7,7 +7,7 @@ import ColorShowcase from "@/components/ColorShowcase";
 import CameraZoom from "@/components/CameraZoom";
 import Explore360 from "@/components/Explore360";
 import Lineup from "@/components/Lineup";
-import Catalog from "@/components/Catalog";
+import CatalogTeaser from "@/components/CatalogTeaser";
 import Ecosystem from "@/components/Ecosystem";
 import WhyStack from "@/components/WhyStack";
 import Store from "@/components/Store";
@@ -31,7 +31,7 @@ export default function Home() {
         <CameraZoom />
         <Explore360 />
         <Lineup />
-        <Catalog />
+        <CatalogTeaser />
         <Ecosystem />
         <Marquee tone="navy" reverse />
         <WhyStack />

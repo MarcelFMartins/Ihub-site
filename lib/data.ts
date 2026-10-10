@@ -111,6 +111,8 @@ export const INSTA = [
 export type Condition = "lacrado" | "seminovo" | "usado";
 
 export type StockItem = {
+  /** Cor de destaque do card (fundo suave atrás do aparelho). */
+  tint?: string;
   model: string;
   storage: string;
   color: string;
@@ -129,11 +131,11 @@ export const CONDITIONS: { id: Condition; label: string; desc: string }[] = [
 
 /** Estoque atual. Troque as fotos em /public/catalogo/ pelas fotos reais dos aparelhos. */
 export const STOCK: StockItem[] = [
-  { model: "iPhone 18 Pro Max", storage: "256 GB", color: "Azul Glaciar", condition: "lacrado", img: "/products/18promax-glacier.webp" },
-  { model: "iPhone 18 Pro", storage: "256 GB", color: "Bordô", condition: "lacrado", img: "/products/18pro-burgundy.webp" },
-  { model: "iPhone 17 Pro Max", storage: "512 GB", color: "Laranja Cósmico", condition: "lacrado", img: "/products/17promax-orange.webp" },
-  { model: "iPhone 17 Pro", storage: "256 GB", color: "Laranja Cósmico", condition: "seminovo", battery: 98, img: "/products/17pro-orange.webp" },
-  { model: "iPhone 17", storage: "256 GB", color: "Sálvia", condition: "lacrado", img: "/products/17-sage.webp" },
+  { model: "iPhone 18 Pro Max", storage: "256 GB", color: "Azul Glaciar", condition: "lacrado", tint: "#8fa9c8", img: "/products/18promax-glacier.webp" },
+  { model: "iPhone 18 Pro", storage: "256 GB", color: "Bordô", condition: "lacrado", tint: "#5b1e28", img: "/products/18pro-burgundy.webp" },
+  { model: "iPhone 17 Pro Max", storage: "512 GB", color: "Laranja Cósmico", condition: "lacrado", tint: "#e8892b", img: "/products/17promax-orange.webp" },
+  { model: "iPhone 17 Pro", storage: "256 GB", color: "Laranja Cósmico", condition: "lacrado", tint: "#e8892b", img: "/products/17pro-orange.webp" },
+  { model: "iPhone 17", storage: "256 GB", color: "Sálvia", condition: "lacrado", tint: "#9fb59a", img: "/products/17-sage.webp" },
   { model: "iPhone 16 Pro Max", storage: "256 GB", color: "Titânio Deserto", condition: "seminovo", battery: 94, img: "/catalogo/16promax.png" },
   { model: "iPhone 15 Pro Max", storage: "256 GB", color: "Titânio Natural", condition: "seminovo", battery: 89, img: "/catalogo/15promax.png" },
   { model: "iPhone 14 Pro Max", storage: "128 GB", color: "Roxo Profundo", condition: "usado", battery: 86, img: "/catalogo/14promax.png" },
