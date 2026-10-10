@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import Logo from "./Logo";
 import { useLenis } from "./SmoothScroll";
 import { wa } from "@/lib/data";
@@ -8,6 +9,7 @@ import { wa } from "@/lib/data";
 const LINKS = [
   ["iPhone 18 Pro", "#cores"],
   ["Linha iPhone", "#linha"],
+  ["Catálogo", "/catalogo"],
   ["Mac & iPad", "#ecossistema"],
   ["Por que a iHub", "#porque"],
   ["Loja", "#loja"],
@@ -15,6 +17,8 @@ const LINKS = [
 
 export default function Nav() {
   const lenis = useLenis();
+  const home = usePathname() === "/";
+  const url = (href: string) => (home || !href.startsWith("#") ? href : `/${href}`);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
@@ -32,19 +36,20 @@ export default function Nav() {
   }, [lenis]);
 
   const go = (e: React.MouseEvent, href: string) => {
-    e.preventDefault();
     setOpen(false);
+    if (!home || !href.startsWith("#")) return;
+    e.preventDefault();
     lenis?.scrollTo(href === "#top" ? 0 : href, { offset: 0, duration: href === "#top" ? 2.2 : 1.6 });
   };
 
   return (
     <header className={`nav ${scrolled ? "is-scrolled" : ""} ${hidden && !open ? "is-hidden" : ""} ${open ? "is-open" : ""}`}>
-      <a href="#top" className="nav__logo" onClick={(e) => go(e, "#top")} aria-label="iHub Brasil — início">
+      <a href={url("#top")} className="nav__logo" onClick={(e) => go(e, "#top")} aria-label="iHub Brasil — início">
         <Logo ink="#fff" sub badge={false} />
       </a>
       <nav className="nav__links">
         {LINKS.map(([label, href], i) => (
-          <a key={href} href={href} onClick={(e) => go(e, href)} style={{ "--i": i } as React.CSSProperties}>
+          <a key={href} href={url(href)} onClick={(e) => go(e, href)} style={{ "--i": i } as React.CSSProperties}>
             {label}
           </a>
         ))}

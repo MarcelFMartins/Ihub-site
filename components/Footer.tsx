@@ -1,7 +1,8 @@
 import Logo from "./Logo";
 import { ADDRESS, CITY, INSTAGRAM_HANDLE, INSTAGRAM_URL, MAPS_URL, WHATSAPP_DISPLAY, wa } from "@/lib/data";
 
-export default function Footer() {
+export default function Footer({ home = true }: { home?: boolean }) {
+  const h = home ? "" : "/";
   return (
     <footer className="footer">
       <div className="footer__top">
@@ -9,10 +10,11 @@ export default function Footer() {
         <div className="footer__cols">
           <div>
             <span>Produtos</span>
-            <a href="#linha">iPhone</a>
-            <a href="#ecossistema">MacBook</a>
-            <a href="#ecossistema">iPad</a>
-            <a href="#ecossistema">AirPods & acessórios</a>
+            <a href={`${h}#linha`}>iPhone</a>
+            <a href="/catalogo">Catálogo</a>
+            <a href={`${h}#ecossistema`}>MacBook</a>
+            <a href={`${h}#ecossistema`}>iPad</a>
+            <a href={`${h}#ecossistema`}>AirPods & acessórios</a>
           </div>
           <div>
             <span>Contato</span>
